@@ -5,4 +5,4 @@ class FileSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = File
-		fields = ('user', 'path', 'timestamp')
+		fields = ( 'path', 'timestamp')

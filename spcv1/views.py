@@ -6,7 +6,7 @@ from .models import File
 from .serializer import FileSerializer
 from django.shortcuts import render
 from .forms import UserForm
-
+from django.http import HttpResponse
 def register(request):
     form = UserForm(request.POST or None)
     if form.is_valid():
@@ -20,11 +20,11 @@ def register(request):
             if user.is_active:
                 login(request, user)
                 files = File.objects.filter(user=request.user)
-                return render(request, 'spcv1/index.html', {'file': files})
+                return HttpResponse('<h1>Logged in</h1>')
     context = {
         "form": form,
     }
-    return render(request, 'spcv1/register.html', context)
+    return HttpResponse('<h1>NOT Logged in</h1>')
 
 
 
@@ -34,7 +34,7 @@ class FileList(APIView):
 
 	def get(self, request):
 		files = File.objects.all() #get all file objects
-		serializer = FileSerializer(file, many=True)
+		serializer = FileSerializer(files, many=True)
 		return Response(serializer.data)
 
 	def post(self):
