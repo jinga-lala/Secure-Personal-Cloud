@@ -23,7 +23,6 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     
     url(r'^spc/', include('spcv1.urls')),
-    url(r'^', include('spcv1.urls')),
     url(r'^users/', views.FileList.as_view()),
 ]
 urlpatterns = format_suffix_patterns(urlpatterns)

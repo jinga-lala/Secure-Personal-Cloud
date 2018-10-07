@@ -4,5 +4,5 @@ from . import views
 app_name = 'spcv1'
 
 urlpatterns = [
-	url(r'^spc/$', views.register, name='register'),
+	url(r'^$', views.register, name='register'),
 ]
