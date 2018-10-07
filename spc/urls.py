@@ -16,12 +16,14 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from django.conf.urls import include
+from rest_framework.urlpatterns import format_suffix_patterns
+from spcv1 import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     
     url(r'^spc/', include('spcv1.urls')),
     url(r'^', include('spcv1.urls')),
-
-
+    url(r'^users/', views.FileList.as_view()),
 ]
+urlpatterns = format_suffix_patterns(urlpatterns)
