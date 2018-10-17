@@ -17,12 +17,17 @@ from django.conf.urls import url
 from django.contrib import admin
 from django.conf.urls import include
 from rest_framework.urlpatterns import format_suffix_patterns
+from django.contrib.auth import views as auth_views
+
 from spcv1 import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    
+    url(r'^login/$', auth_views.LoginView, {'template_name': 'login.html'}, name='login'),
+    url(r'^logout/$', auth_views.LogoutView, name='logout'),
     url(r'^spc/', include('spcv1.urls')),
-    url(r'^users/', views.FileList.as_view()),
+    url(r'^signup$', views.signup, name='signup'),
+    url(r'^api/', views.FileList.as_view()),
+
 ]
 urlpatterns = format_suffix_patterns(urlpatterns)

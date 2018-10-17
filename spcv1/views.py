@@ -7,25 +7,26 @@ from .serializer import FileSerializer
 from django.shortcuts import render
 from .forms import UserForm
 from django.http import HttpResponse
-def register(request):
-    form = UserForm(request.POST or None)
-    if form.is_valid():
-        user = form.save(commit=False)
-        username = form.cleaned_data['username']
-        password = form.cleaned_data['password']
-        user.set_password(password)
-        user.save()
-        user = authenticate(username=username, password=password)
-        if user is not None:
-            if user.is_active:
-                login(request, user)
-                files = File.objects.filter(user=request.user)
-                return HttpResponse('<h1>Logged in</h1>')
-    context = {
-        "form": form,
-    }
-    return HttpResponse('<h1>NOT Logged in</h1>')
+from django.contrib.auth import login, authenticate
+from django.contrib.auth.forms import UserCreationForm
+from django.shortcuts import render, redirect
+def home(request):
+    return render(request, 'home.html')
 
+
+def signup(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=raw_password)
+            login(request, user)
+            return redirect('home')
+    else:
+        form = UserCreationForm()
+    return render(request, 'signup.html', {'form': form})
 
 
 #List all users, with their file paths and time-stamp
