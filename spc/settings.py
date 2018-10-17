@@ -24,7 +24,8 @@ SECRET_KEY = '+$+r$s)qbb+0lhbqx2#1p%cvb37@hpr&h%by46%wb_1wcp&5z='
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
+LOGIN_REDIRECT_URL='/spc/'
+LOGOUT_REDIRECT_URL='/spc/'
 ALLOWED_HOSTS = []
 
 

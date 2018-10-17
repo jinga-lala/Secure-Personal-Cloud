@@ -23,11 +23,10 @@ from spcv1 import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^login/$', auth_views.LoginView, {'template_name': 'login.html'}, name='login'),
-    url(r'^logout/$', auth_views.LogoutView, name='logout'),
+    url(r'^login/$', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
+    url(r'^logout/$', auth_views.LogoutView.as_view(), name='logout'),
     url(r'^spc/', include('spcv1.urls')),
     url(r'^signup$', views.signup, name='signup'),
     url(r'^api/', views.FileList.as_view()),
-
 ]
 urlpatterns = format_suffix_patterns(urlpatterns)
