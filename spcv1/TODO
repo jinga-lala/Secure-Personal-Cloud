@@ -10,7 +10,8 @@ Each client has a gitignore kind of file, which has encryption schema, each file
 Path is relative path, relative to spc observe
 
 //TODO 
-Figure out how to use django to make a serrver for linux client
-Figure out how to tranfer files to sql database through linux, either through django or other means(socket programming)?
+Figure out how to use django to make a serrver for linux client - DONE
+Figure out how to tranfer files to sql database through linux, either through django or other means(socket programming)?	- REST API POST REQUEST
 Write as much of bash wrapper as possible to parse commands
 Figure out conflicts, keep updating gitignore file
+Make APIs, make POST function in APIs, filter with API

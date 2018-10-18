@@ -24,4 +24,9 @@ def upload_file(path,user,server):
 	encoded_data=encode(data)
 
 def download_file():
+	'''
+	Get paths, check whether those paths exist, if they don't, we download, 
+	if there are extraneous paths, we upload.
+	Then diff files/check timestamps, have a THRESHOLD variable for diff tolerance
+	'''
 	
