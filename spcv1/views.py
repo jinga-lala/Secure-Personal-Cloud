@@ -37,13 +37,18 @@ def signup(request):
 #user/filename
 class FileList(APIView):
 
-	def get(self, request):
-		files = File.objects.all() #get all file objects
-		serializer = FileSerializer(files, many=True)
-		return Response(serializer.data)
+    def get(self, request):
+        files = File.objects.all() #get all file objects
+        serializer = FileSerializer(files, many=True)
+        return Response(serializer.data)
 
-	def post(self):
-		pass
+    def post(self,request):
+        j = request.data
+        serializer = FileSerializer(data = j)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # Create your views here.
 
@@ -77,7 +82,5 @@ class FileListUserData(APIView):
         serializer = FileSerializer(files, many=True )
         return Response(serializer.data)
 
-    def post(self):
+    def post(self,request,user_id,path):
         pass
-
- 
