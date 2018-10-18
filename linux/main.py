@@ -1,7 +1,7 @@
 import authenticate
-
 USER=''
 SERVER=''
+PWD=''
 
 if __name__=="__main__":
 	SERVER=input("Enter server IP : ")
