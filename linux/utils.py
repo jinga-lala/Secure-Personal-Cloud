@@ -29,7 +29,7 @@ def create_files(paths,pwd,user,server):
 		data,__=network_operations.download_file(path,user,server)
 		directory="/".join(path.split("/")[:-1])+"/"
 		try:
-			os.mkdirs(directory)
+			os.makedirs(directory)
 		except FileExistsError:
 			a=1
 		file=open(path,"wb")
