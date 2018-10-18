@@ -73,9 +73,11 @@ class FileListUserData(APIView):
     def get(self,request,user_id,path):
         new_path = "./"+path ## ASSUMPTION: ALL PATHS WILL BEGIN WITH "./"
         user = User.objects.filter(username=user_id)
-        files = File.objects.filter(user=user[0],path=new_path)
-        serializer = FileSerializer(files, many=True)
+        files = File.objects.filter(user=user[0], path=new_path)
+        serializer = FileSerializer(files, many=True )
         return Response(serializer.data)
 
+    def post(self):
+        pass
 
  
