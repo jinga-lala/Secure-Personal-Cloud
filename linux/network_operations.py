@@ -2,28 +2,35 @@ import base64
 import os
 import requests
 import json
-def encode(data):		#TODO- EnDe
-	'''
-	Returns string from given bytestream
-	'''
-	# file=open(path,"rb")
-
-	data=file.read()
-	return(base64.b64encode(data).decode('ascii'))
-
 def decode(data):
 	'''
 	Returns bytestream from given string
 	'''
 	return(base64.b64decode(data))
 
+
+def encode(data):		
+	'''
+	Returns string from given bytestream
+	'''
+	return(base64.b64encode(data).decode('ascii'))
+
 def upload_file(path,user,server):
+	'''
+	Uploads file given a dict of user, path of file and server
+	URL.
+	'''
 	file=open(path,"rb")
 	data=file.read()
-	'''
-	Put crypto here
-	'''
+	# print("Khem ki ma ki choot")
 	encoded_data=encode(data)
+	payload={'user':user,'path':path,'timestamp':os.path.getmtime(path),'data':encoded_data}
+	post_data=json.dumps(payload)
+	headers={'Content-type':'application/json'}
+	api_url=server+"api/"
+	client=requests.session()
+	p=client.post(api_url,data=post_data,headers=headers)	
+	return p	
 	# TODO
 
 def get_paths(server,username):
