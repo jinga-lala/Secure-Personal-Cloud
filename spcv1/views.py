@@ -1,9 +1,11 @@
 from django.shortcuts import get_object_or_404
 from  rest_framework.views import APIView
 from rest_framework.response import Response
+from django.contrib.auth.models import User
 from rest_framework import status
 from .models import File
 from .serializer import FileSerializer
+from .serializer import FileSerializerNotData
 from django.shortcuts import render
 from .forms import UserForm
 from django.http import HttpResponse
@@ -44,3 +46,36 @@ class FileList(APIView):
 		pass
 
 # Create your views here.
+
+class FileListNotData(APIView):
+
+    def get(self, request):
+        files = File.objects.all() #get all file objects
+        serializer = FileSerializerNotData(files, many=True)
+        return Response(serializer.data)
+
+    def post(self):
+        pass
+
+class FileListNotDataUser(APIView):
+
+    def get(self,request,user_id):
+        user = User.objects.filter(username=user_id)
+        files = File.objects.filter(user=user[0])
+        serializer = FileSerializerNotData(files, many=True)
+        return Response(serializer.data)
+
+    def  post(self):
+        pass
+
+class FileListUserData(APIView):
+
+    def get(self,request,user_id,path):
+        new_path = "./"+path ## ASSUMPTION: ALL PATHS WILL BEGIN WITH "./"
+        user = User.objects.filter(username=user_id)
+        files = File.objects.filter(user=user[0],path=new_path)
+        serializer = FileSerializer(files, many=True)
+        return Response(serializer.data)
+
+
+ 

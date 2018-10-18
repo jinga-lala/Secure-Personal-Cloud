@@ -28,5 +28,9 @@ urlpatterns = [
     url(r'^spc/', include('spcv1.urls')),
     url(r'^signup$', views.signup, name='signup'),
     url(r'^api/', views.FileList.as_view()),
+    url(r'^pathAPI/$',views.FileListNotData.as_view()),
+    url(r'^pathAPI/(?P<user_id>[a-zA-Z0-9\-\_]+)/$', views.FileListNotDataUser.as_view(), name='results'),
+    url(r'^pathAPI/(?P<user_id>[a-zA-Z0-9\-\_]+)/(?P<path>.*)$', views.FileListUserData.as_view(), name='file'),
+    ##TODO Error handling and security risks
 ]
 urlpatterns = format_suffix_patterns(urlpatterns)
