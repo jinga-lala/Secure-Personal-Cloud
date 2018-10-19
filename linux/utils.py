@@ -2,7 +2,7 @@ import os
 import network_operations
 def get_paths_of_uploads_and_downloads(pwd,server,username):
 	paths_and_timestamps=network_operations.get_paths(server,username)
-	user=paths_and_timestamps[0]["user"]
+	user=paths_and_timestamps[0]["user"]["id"]
 	os.chdir(pwd)
 	all_files=[]
 	for path,subdir,files in os.walk(pwd):
