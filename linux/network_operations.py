@@ -22,7 +22,6 @@ def upload_file(path,user,server):
 	'''
 	file=open(path,"rb")
 	data=file.read()
-	# print("Khem ki ma ki choot")
 	encoded_data=encode(data)
 	payload={'user':user,'path':path,'timestamp':os.path.getmtime(path),'data':encoded_data}
 	post_data=json.dumps(payload)
@@ -50,6 +49,7 @@ def download_file(path,user,server):
 	api_url=server+"api/"+user+"/"+path #Fix URL
 	client=requests.session()
 	data=client.get(api_url)
+	# print(data.json())
 	return [decode(data.json()[0]["data"]),data.json()[0]["timestamp"]]	#fix this	
 
 	

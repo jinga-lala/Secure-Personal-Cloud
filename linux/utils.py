@@ -27,7 +27,7 @@ def create_files(paths,pwd,user,server):
 	Use on download_paths[]
 	''' 
 	for path in paths:
-		data,__=network_operations.download_file(path,user,server)
+		data,__=network_operations.download_file(path[2:],user,server)
 		directory="/".join(path.split("/")[:-1])+"/"
 		try:
 			os.makedirs(directory)
@@ -41,7 +41,8 @@ def upload_files(paths,user,server):
 	'''
 	Uploads files on given paths
 	'''
-	# TODO- call upload function again and again
+	for path in paths:
+		network_operations.upload_file(path,user,server)
 
 def resolve_conflicts(paths,user,server):
 	'''
