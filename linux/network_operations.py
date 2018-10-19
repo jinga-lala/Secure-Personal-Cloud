@@ -52,4 +52,8 @@ def download_file(path,user,server):
 	# print(data.json())
 	return [decode(data.json()[0]["data"]),data.json()[0]["timestamp"]]	#fix this	
 
-	
+def get_user_id(username,server):
+	api_url=server+"userAPI/"+username+"/"
+	client=requests.session()
+	data=client.get(api_url)
+	return(data.json()[0]["id"])		
