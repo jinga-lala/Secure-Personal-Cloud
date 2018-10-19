@@ -44,6 +44,18 @@ def upload_files(paths,user,server):
 	for path in paths:
 		network_operations.upload_file(path,user,server)
 
+def status(pwd,server,username):
+	to_be_downloaded,to_be_uploaded,conflicted,_=get_paths_of_uploads_and_downloads(pwd,server,username)
+	print("\n","Files not on server : ","\n")
+	for path in to_be_uploaded:
+		print("\t",path)
+	print("\n","Files not available locally : ","\n")
+	for path in to_be_downloaded:
+		print("\t",path)
+	print("\n","Conflicted files : ","\n")
+	for path in conflicted:
+		print("\t",path)
+
 def resolve_conflicts(paths,user,server):
 	'''
 	Call on conflicts array, downloads files, compares them, asks user, then maybe downloads
