@@ -4,7 +4,7 @@ import os
 import utils
 USER=''
 SERVER=''
-PWD=''
+PWD='./'
 
 if __name__=="__main__":
 	SERVER=input("Enter server IP : ")
@@ -15,7 +15,8 @@ if __name__=="__main__":
 		print("AUTHENTICATED. Hello ",input_user)
 		USER=input_user
 		a,b,c,d=utils.get_paths_of_uploads_and_downloads(pwd="./",server=SERVER,username=USER)
-		utils.status("./",SERVER,USER)
+		utils.status(PWD,SERVER,USER)
+		utils.resolve_conflicts(c,PWD,USER,d,SERVER)
 		# print(a,c)
 		# utils.create_files(a,"./",USER,SERVER)
 	# print(a)
