@@ -44,6 +44,7 @@ def upload_files(paths,user,server):
 	'''
 	Uploads files on given paths
 	'''
+	# jsfoj
 	for path in paths:
 		network_operations.upload_file(path,user,server)
 

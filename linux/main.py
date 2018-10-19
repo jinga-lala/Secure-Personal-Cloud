@@ -16,6 +16,8 @@ if __name__=="__main__":
 		USER=input_user
 		a,b,c,d=utils.get_paths_of_uploads_and_downloads(pwd="./",server=SERVER,username=USER)
 		utils.status(PWD,SERVER,USER)
+		# utils.create_files(a,PWD,USER,SERVER)
+		utils.upload_files(b,d,SERVER)
 		utils.resolve_conflicts(c,PWD,USER,d,SERVER)
 		# print(a,c)
 		# utils.create_files(a,"./",USER,SERVER)
