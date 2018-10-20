@@ -44,7 +44,6 @@ def upload_files(paths,user,server):
 	'''
 	Uploads files on given paths
 	'''
-	# jsfoj
 	for path in paths:
 		network_operations.upload_file(path,user,server)
 
@@ -73,7 +72,7 @@ def resolve_conflicts(paths,pwd,username,user_id,server):
 				print(file," differs on the cloud, resolve conflict manually.")
 				choice=input("Enter 'u' to upload file, 'd' to download : ")
 				if(choice=='u'):
-					network_operations.upload_file(file,user_id,server)
+					network_operations.update_file(file[2:],username,server)
 				if(choice=='d'):
 					create_file(file,pwd,username,server)
 			else:
@@ -96,7 +95,7 @@ def resolve_conflicts(paths,pwd,username,user_id,server):
 						print(line)
 					choice=input("Enter 'u' to upload file, 'd' to download : ")
 					if(choice=='u'):
-						network_operations.upload_file(file,user_id,server)
+						network_operations.update_file(file[2:],username,server)
 					if(choice=='d'):
 						create_file(file,pwd,username,server)
 
@@ -125,6 +124,6 @@ def resolve_conflicts(paths,pwd,username,user_id,server):
 					print(line)
 				choice=input("Enter 'u' to upload file, 'd' to download : ")
 				if(choice=='u'):
-					network_operations.upload_file(file,user_id,server)
+					network_operations.update_file(file[2:],username,server)
 				if(choice=='d'):
 					create_file(file,pwd,username,server)

@@ -57,3 +57,15 @@ def get_user_id(username,server):
 	client=requests.session()
 	data=client.get(api_url)
 	return(data.json()[0]["id"])		
+
+def update_file(path,username,server):
+	file=open(path,"rb")
+	data=file.read()
+	encoded_data=encode(data)
+	payload={'path':path,'timestamp':os.path.getmtime(path),'data':encoded_data}
+	post_data=json.dumps(payload)
+	headers={'Content-type':'application/json'}
+	api_url=server+"api/"+username+"/"+path
+	client=requests.session()
+	p=client.post(api_url,data=post_data,headers=headers)	
+	return p	

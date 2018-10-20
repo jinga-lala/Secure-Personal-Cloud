@@ -6,6 +6,7 @@ from rest_framework import status
 from .models import File
 from .serializer import FileSerializer
 from .serializer import FileSerializerNotData
+from .serializer import UserSerializer
 from django.shortcuts import render
 from .forms import UserForm
 from django.http import HttpResponse
@@ -91,3 +92,13 @@ class FileListUserData(APIView):
         files = File.objects.filter(user=user[0], path=new_path).update(data=request.data["data"], timestamp= request.data["timestamp"])
         return Response(request.data, status=status.HTTP_201_CREATED)
 
+class UserId(APIView):
+
+    def get(self,request,user_id):
+        user = User.objects.filter(username=user_id)
+        # files = File.objects.filter(user=user[0])
+        serializer = UserSerializer(user, many=True)
+        return Response(serializer.data)
+
+    def  post(self):
+        pass
