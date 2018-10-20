@@ -39,12 +39,14 @@ def create_files(paths,pwd,user,server):
 	Use on download_paths[]
 	''' 
 	for path in paths:
+		print("Downloading ",path)
 		create_file(path,pwd,user,server)
 def upload_files(paths,user,server):
 	'''
 	Uploads files on given paths
 	'''
 	for path in paths:
+		print("Uploading ",path)
 		network_operations.upload_file(path,user,server)
 
 def status(pwd,server,username):
@@ -127,3 +129,6 @@ def resolve_conflicts(paths,pwd,username,user_id,server):
 					network_operations.update_file(file[2:],username,server)
 				if(choice=='d'):
 					create_file(file,pwd,username,server)
+
+def die_with_usage():
+	print("Enter a couple of args please")
