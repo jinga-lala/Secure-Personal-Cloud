@@ -7,6 +7,8 @@ class File(models.Model):
     path = models.CharField(max_length=1000)
     data = models.CharField(max_length=10000000000)
     timestamp = models.FloatField()
+    class Meta:
+    	unique_together = (('user','path'),)
     # def __init__(self):
     # 	username = user.username
     def __str__(self):

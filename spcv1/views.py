@@ -83,4 +83,11 @@ class FileListUserData(APIView):
         return Response(serializer.data)
 
     def post(self,request,user_id,path):
-        pass
+        '''
+            to resove conflicts and update file data
+        '''
+        new_path = "./"+path
+        user = User.objects.filter(username=user_id)
+        files = File.objects.filter(user=user[0], path=new_path).update(data=request.data["data"], timestamp= request.data["timestamp"])
+        return Response(request.data, status=status.HTTP_201_CREATED)
+
