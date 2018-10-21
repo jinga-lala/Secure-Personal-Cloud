@@ -9,9 +9,11 @@ def get_paths_of_uploads_and_downloads(pwd,server,username):
 	for path,subdir,files in os.walk(pwd):
 		for name in files:
 			all_files.append(os.path.join(path,name))
+	all_files=[x.replace(pwd,"./") for x in all_files]
 	all_files=set(all_files)
-	all_cloud_files=set([x["path"] for x in paths_and_timestamps])
+	all_cloud_files=set([x["path"] for x in paths_and_timestamps])	#Compare with replace with ./, download with full path
 	upload_paths=list(all_files-all_cloud_files)
+	# upload_paths=[(x[1:]+pwd) for x in upload_paths]
 	download_paths=[]
 	conflicts=[]
 	for i in paths_and_timestamps:
@@ -29,6 +31,7 @@ def create_file(path,pwd,user,server):
 		os.makedirs(directory)
 	except FileExistsError:
 		a=1
+	path=pwd+path[1:]
 	file=open(path,"wb")
 	file.write(data)
 	file.close()
@@ -41,13 +44,13 @@ def create_files(paths,pwd,user,server):
 	for path in paths:
 		print("Downloading ",path)
 		create_file(path,pwd,user,server)
-def upload_files(paths,user,server):
+def upload_files(paths,pwd,user,server):
 	'''
 	Uploads files on given paths
 	'''
 	for path in paths:
 		print("Uploading ",path)
-		network_operations.upload_file(path,user,server)
+		network_operations.upload_file(path,pwd,user,server)
 
 def status(pwd,server,username):
 	to_be_downloaded,to_be_uploaded,conflicted,_=get_paths_of_uploads_and_downloads(pwd,server,username)
@@ -74,7 +77,7 @@ def resolve_conflicts(paths,pwd,username,user_id,server):
 				print(file," differs on the cloud, resolve conflict manually.")
 				choice=input("Enter 'u' to upload file, 'd' to download : ")
 				if(choice=='u'):
-					network_operations.update_file(file[2:],username,server)
+					network_operations.update_file(file[2:],pwd,username,server)
 				if(choice=='d'):
 					create_file(file,pwd,username,server)
 			else:
@@ -97,7 +100,7 @@ def resolve_conflicts(paths,pwd,username,user_id,server):
 						print(line)
 					choice=input("Enter 'u' to upload file, 'd' to download : ")
 					if(choice=='u'):
-						network_operations.update_file(file[2:],username,server)
+						network_operations.update_file(file[2:],pwd,username,server)
 					if(choice=='d'):
 						create_file(file,pwd,username,server)
 
@@ -126,7 +129,7 @@ def resolve_conflicts(paths,pwd,username,user_id,server):
 					print(line)
 				choice=input("Enter 'u' to upload file, 'd' to download : ")
 				if(choice=='u'):
-					network_operations.update_file(file[2:],username,server)
+					network_operations.update_file(file[2:],pwd,username,server)
 				if(choice=='d'):
 					create_file(file,pwd,username,server)
 

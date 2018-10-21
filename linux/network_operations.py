@@ -15,12 +15,12 @@ def encode(data):
 	'''
 	return(base64.b64encode(data).decode('ascii'))
 
-def upload_file(path,user,server):
+def upload_file(path,pwd,user,server):
 	'''
 	Uploads file given a dict of user, path of file and server
 	URL.
 	'''
-	file=open(path,"rb")
+	file=open((pwd+path[1:]),"rb")
 	data=file.read()
 	encoded_data=encode(data)
 	payload={'user':user,'path':path,'timestamp':os.path.getmtime(path),'data':encoded_data}
@@ -58,11 +58,11 @@ def get_user_id(username,server):
 	data=client.get(api_url)
 	return(data.json()[0]["id"])		
 
-def update_file(path,username,server):
-	file=open(path,"rb")
+def update_file(path,pwd,username,server):
+	file=open((pwd+path),"rb")
 	data=file.read()
 	encoded_data=encode(data)
-	payload={'path':path,'timestamp':os.path.getmtime(path),'data':encoded_data}
+	payload={'path':path.replace(pwd,"."),'timestamp':os.path.getmtime(path),'data':encoded_data}
 	post_data=json.dumps(payload)
 	headers={'Content-type':'application/json'}
 	api_url=server+"api/"+username+"/"+path

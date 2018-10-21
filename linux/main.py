@@ -57,18 +57,19 @@ if __name__=="__main__":
 			else:
 				utils.die_with_usage()
 		if(sys.argv[1]=="observe"):
-			PWD=os.getcwd()
+			# PWD=os.getcwd()
+			PWD="./"
 			l=open(LOGFILE,"w")
 			j["PWD"]=PWD
 			json.dump(j,l)
 			l.close()
 		if(sys.argv[1]=="sync"):
-			a,b,c,d=utils.get_paths_of_uploads_and_downloads(pwd="./",server=SERVER,username=USER)
+			a,b,c,d=utils.get_paths_of_uploads_and_downloads(pwd=PWD,server=SERVER,username=USER)
 			utils.status(PWD,SERVER,USER)
 			choice=input("Press y to continue , n to quit")
 			if(choice=="y"):
 				utils.create_files(a,PWD,USER,SERVER)
-				utils.upload_files(b,d,SERVER)
+				utils.upload_files(b,PWD,d,SERVER)
 				utils.resolve_conflicts(c,PWD,USER,d,SERVER)
 			
 	# SERVER=input("Enter server IP : ")
