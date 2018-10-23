@@ -5,6 +5,7 @@ import utils
 import argparse
 import sys
 import json
+import getpass
 USER=''
 SERVER=''
 PWD='./'
@@ -24,7 +25,7 @@ if __name__=="__main__":
 		utils.die_with_usage()
 	elif(len(sys.argv)==1 and AUTHENTICATED==False):
 		input_user=input("Enter Username : ")
-		input_pwd=input("Enter Password : ")
+		input_pwd=getpass.getpass("Enter Password : ")
 		SERVER=input("Enter server : " )
 		if(authenticate.login(input_user,input_pwd,SERVER)):
 			print("AUTHENTICATED. Hello",input_user)
