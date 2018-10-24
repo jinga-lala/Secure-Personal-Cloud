@@ -11,7 +11,7 @@ def get_paths_of_uploads_and_downloads(pwd, server, username):
     for path, subdir, files in os.walk(pwd):
         for name in files:
             all_files.append(os.path.join(path, name))
-    all_files = [x.replace(pwd, "./") for x in all_files]
+    all_files = [x.replace(pwd, ".") for x in all_files]
     all_files = set(all_files)
     all_cloud_files = set([x["path"] for x in paths_and_timestamps])  # Compare with replace with ./, download with full path
     upload_paths = list(all_files - all_cloud_files)
@@ -81,7 +81,7 @@ def resolve_conflicts(paths, pwd, username, user_id, server):
     # TODO
     allowed = ["txt", "py", "cpp", "c", ]
     for file in paths:
-        if(len(file.split(".")) > 1):
+        if(len(file[2:].split(".")) > 1):
             extension = file.split(".")[-1]
             if(extension not in allowed):
                 print(file, " differs on the cloud, resolve conflict manually.")
@@ -122,27 +122,29 @@ def resolve_conflicts(paths, pwd, username, user_id, server):
             Diff here
             '''
             contents, _ = network_operations.download_file(file[2:], username, server)
-            fileb = open("buff_diff.txt", "wb")
+            fileb = open("./buff_diff.txt", "wb")
             fileb.write(contents)
             fileb.close()
-            f1 = open("buff_diff.txt", "r")
+            f1 = open("./buff_diff.txt", "r")
             f2 = open(file, "r")
-            diff = difflib.unified_diff(f1.readlines(), f2.readlines(), fromfile=file, tofile="buff_diff.txt")
-            # f2.close()
+            diff1 = difflib.unified_diff(f1.readlines(), f2.readlines(), fromfile=file, tofile="./buff_diff.txt")
+            diff2 = difflib.unified_diff(f1.readlines(), f2.readlines(), fromfile=file, tofile="./buff_diff.txt")
+            f2.close()
             f1.close()
-            os.remove("buff_diff.txt")
-            if(1.0 * len([_ for _ in diff]) < (0.15) * len([_ for _ in f2.readlines()])):  # Threshold=15%
-                print("Fast forwarding ", file)
-                create_file(file, pwd, user, server)
-            else:
-                print("For file", file, "Here are the conflicts")
-                for line in diff:
-                    print(line)
-                choice = input("Enter 'u' to upload file, 'd' to download : ")
-                if(choice == 'u'):
-                    network_operations.update_file(file[2:], pwd, username, server)
-                if(choice == 'd'):
-                    create_file(file, pwd, username, server)
+
+            os.remove("./buff_diff.txt")
+            # if(1.0 * len([_ for _ in diff1]) < (0.15) * len([_ for _ in f2.readlines()])):  # Threshold=15%
+            #     print("Fast forwarding ", file)
+            #     create_file(file, pwd, username, server)
+            # else:
+            print("For file", file, "Here are the conflicts")
+            for line in diff1:
+                print(line)
+            choice = input("Enter 'u' to upload file, 'd' to download : ")
+            if(choice == 'u'):
+                network_operations.update_file(file[2:], pwd, username, server)
+            if(choice == 'd'):
+                create_file(file, pwd, username, server)
 
 
 def die_with_usage():

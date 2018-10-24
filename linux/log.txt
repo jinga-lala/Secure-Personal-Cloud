@@ -1,1 +1,1 @@
-{"SERVER": "http://127.0.0.1:8000/", "USER": "demo", "PWD": "./", "AUTHENTICATED": true}
+{"SERVER": "http://127.0.0.1:8000/", "USER": "demo", "PWD": "/home/yashkhem/t5", "AUTHENTICATED": true}
