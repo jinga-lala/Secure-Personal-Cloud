@@ -69,6 +69,7 @@ if __name__ == "__main__":
             json.dump(j, l)
             l.close()
         if(sys.argv[1] == "sync"):
+            # input_pwd = getpass.getpass("Enter your Password : ")
             a, b, c, d = utils.get_paths_of_uploads_and_downloads(pwd=PWD, server=SERVER, username=USER)
             utils.status(PWD, SERVER, USER)
             choice = input("Press y to continue , n to quit")
@@ -82,13 +83,13 @@ if __name__ == "__main__":
     # input_user=input("Enter Username : ")
     # input_pwd=input("Enter Password : ")
     # if(authenticate.login(input_user,input_pwd,SERVER)):
-    # 	print("AUTHENTICATED. Hello ",input_user)
-    # 	USER=input_user
-    # 	a,b,c,d=utils.get_paths_of_uploads_and_downloads(pwd="./",server=SERVER,username=USER)
-    # 	utils.status(PWD,SERVER,USER)
-    # 	# utils.create_files(a,PWD,USER,SERVER)
-    # 	utils.upload_files(b,d,SERVER)
-    # 	utils.resolve_conflicts(c,PWD,USER,d,SERVER)
+    #   print("AUTHENTICATED. Hello ",input_user)
+    #   USER=input_user
+    #   a,b,c,d=utils.get_paths_of_uploads_and_downloads(pwd="./",server=SERVER,username=USER)
+    #   utils.status(PWD,SERVER,USER)
+    #   # utils.create_files(a,PWD,USER,SERVER)
+    #   utils.upload_files(b,d,SERVER)
+    #   utils.resolve_conflicts(c,PWD,USER,d,SERVER)
         # print(a,c)
         # utils.create_files(a,"./",USER,SERVER)
     # print(a)
