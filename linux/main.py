@@ -56,13 +56,26 @@ if __name__ == "__main__":
                 j["SERVER"] = SERVER
                 json.dump(j, l)
                 l.close()
+        if(sys.argv[1] == "logout"):
+            # if(USER == ""):
+            #     print("User not logged in")
+            # else:
+            l = open(LOGFILE, "w")
+            j["USER"] = ""
+            j["AUTHENTICATED"] = False
+            j["PWD"] = ""
+            json.dump(j, l)
+            l.close()
+            print("Logged out successfully")
         if(sys.argv[1] == "status"):
             if(SERVER != "" and USER != "" and PWD != ""):
                 utils.status(PWD, SERVER, USER)
+            # elif USER == "":
+            #     print("Login first")
             else:
-                utils.die_with_usage()
+                print("Observe a folder first")
         if(sys.argv[1] == "observe"):
-            PWD=os.getcwd()
+            PWD = os.getcwd()
             #PWD = "./"
             l = open(LOGFILE, "w")
             j["PWD"] = PWD
