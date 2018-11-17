@@ -30,10 +30,12 @@ def upload_file(path, pwd, user, server):
     URL.
     '''
     file = open((pwd + path[1:]), "rb")
+    print(file)
     '''
     TODO - Currently storing unencrypted md5sum...
     '''
     data = file.read()
+    file.close()
     encoded_data = encode(data)
     md5sum = get_md5_sum(encoded_data)
     data,length = en_de.encrypt(data)
@@ -92,6 +94,7 @@ def get_user_id(username, server):
 def update_file(path, pwd, username, server):
     file = open((pwd +"/"+ path), "rb")
     data = file.read()
+    file.close()
     encoded_data = encode(data)
     md5sum = get_md5_sum(encoded_data)
     data,length = en_de.encrypt(data)

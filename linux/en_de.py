@@ -11,7 +11,15 @@ class encryption_data:
 	def __init__(self,scheme,key):
 		self.scheme = scheme
 		self.key = key
+	def __str__(self):
+		return("Encryption Scheme : "+self.scheme+"\nKey : "+net_ops.encode(self.key))
 
+def list():
+	index = print("These are the available encryption schemes :\n\t1. AES \n\t2. Salsa20 \n\t3. ChaCha20\n")	
+def disp_schema():
+	f = open(PATH,"rb")
+	enc_data = pickle.load(f)
+	print(enc_data)
 def generate_schema(scheme="ChaCha20",key=""):
 	# print("Generating scheme - AES")
 	if(key == ""):
@@ -30,6 +38,7 @@ def generate_schema(scheme="ChaCha20",key=""):
 	d = encryption_data(scheme,key)
 	f = open(PATH,"wb")
 	pickle.dump(d,f)
+	f.close()
 	print("Generated a scheme")
 
 def load_scheme(path):
@@ -50,13 +59,18 @@ def get_schema():
 		schemes = ['AES','Salsa20','CAST']
 		index = input("Enter the number corresponding to your encryption scheme :\n\t1. AES \n\t2. Salsa20 \n\t3. ChaCha20\n")
 		scheme = schemes[int(index)-1]
-		key = input("Enter the key as a string : ")
+		choice = input("Do you have a key?\n")
+		if(choice == "y"):
+			key = input("Enter the key as a string : ")
+		else:
+			key=""
 		generate_schema(scheme,key)
 
 
 def encrypt(data):
 	f = open(PATH,"rb")
 	enc_data = pickle.load(f)
+	print(enc_data)
 	scheme = enc_data.scheme
 	key = enc_data.key
 	if(scheme == "AES"):
@@ -72,6 +86,7 @@ def encrypt(data):
 		cipher = ChaCha20.new(key=key)
 		ciphertext = cipher.encrypt(data)
 		return [cipher.nonce+ciphertext,8]
+	f.close()
 	# if scheme == "Blowfish":
 	# 	iv = Random.new().read(bs)
 	# 	cipher = Blowfish.new(key, Blowfish.MODE_CBC, iv)
@@ -85,6 +100,7 @@ def encrypt(data):
 def decrypt(data):
 	f = open(PATH,"rb")
 	enc_data = pickle.load(f)
+	print(enc_data)
 	scheme = enc_data.scheme
 	key = enc_data.key
 	if scheme == "AES":
@@ -101,5 +117,5 @@ def decrypt(data):
 		ciphertext = data[8:]
 		cipher = ChaCha20.new(key=key, nonce=msg_nonce)
 		return cipher.decrypt(ciphertext)
-
+	f.close()
 

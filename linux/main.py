@@ -7,6 +7,7 @@ import sys
 import json
 import getpass
 import en_de
+from shutil import rmtree
 USER = ''
 SERVER = ''
 PWD = './'
@@ -99,6 +100,35 @@ if __name__ == "__main__":
                 #     print("Directory already upto date")
             else:
                 print("Access Denied")
+        if(sys.argv[1]=="en-de"):
+            if sys.argv[2] == "update":
+                input_pwd = getpass.getpass("Enter your Password : ")
+                if(authenticate.login(USER, input_pwd, SERVER)):
+                    print("Authenticated")
+                    a,d = utils.get_paths_of_uploads_and_downloads(pwd=PWD, server=SERVER, username=USER,update=True)
+                    # print(a)
+                    pwd = os.path.join(os.path.dirname(os.path.abspath(__file__)), "temp")
+                    os.mkdir(pwd)
+                    utils.create_files(a, pwd, USER, SERVER)
+                    '''
+                    TODO - proper UX here
+                    '''
+                    # utils.resolve_conflicts(c, PWD, USER, d, SERVER)
+                    en_de.get_schema()
+                    for file in a:
+                        network_operations.update_file(file[2:], pwd, USER, SERVER)
+                    # utils.update_files(a, pwd, d, SERVER)
+                    rmtree(pwd)
+                    # utils.upload_files(c, PWD, d, SERVER)
+
+            elif sys.argv[2] == "dump":
+                choice = input("The details of the scheme will soon appear on the screen. Do you really want that?\n")
+                if choice == "y":
+                    en_de.disp_schema()
+                else:
+                    print("Well okay then")   
+            elif sys.argv[2] == "list":
+                en_de.list() 
 
     # SERVER=input("Enter server IP : ")
     # print(SERVER)

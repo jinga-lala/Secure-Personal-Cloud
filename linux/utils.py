@@ -2,7 +2,7 @@ import os
 import network_operations
 import difflib
 # import en_de
-def get_paths_of_uploads_and_downloads(pwd, server, username):
+def get_paths_of_uploads_and_downloads(pwd, server, username,update=False):
     paths_and_timestamps = network_operations.get_paths(server, username)
     user = network_operations.get_user_id(username, server)
     os.chdir(pwd)
@@ -15,6 +15,8 @@ def get_paths_of_uploads_and_downloads(pwd, server, username):
     all_cloud_files = set([x["path"] for x in paths_and_timestamps])  # Compare with replace with ./, download with full path
     upload_paths = list(all_files - all_cloud_files)
     # upload_paths=[(x[1:]+pwd) for x in upload_paths]
+    if update == True:
+        return [list(all_cloud_files),user]
     download_paths = []
     conflicts = []
     for i in paths_and_timestamps:
@@ -37,17 +39,18 @@ def get_paths_of_uploads_and_downloads(pwd, server, username):
 
 def create_file(path, pwd, user, server):
     data, timestamp = network_operations.download_file(path[2:], user, server)
+    path = pwd + path[1:]
     directory = "/".join(path.split("/")[:-1]) + "/"
+    print(directory)
     try:
         os.makedirs(directory)
     except FileExistsError:
         a = 1
-    path = pwd + path[1:]
     file = open(path, "wb")
     file.write(data)
     # print(timestamp)
     file.close()
-    os.utime(path, (timestamp, timestamp))
+    # os.utime(path, (timestamp, timestamp))
 
 
 def create_files(paths, pwd, user, server):
