@@ -32,7 +32,7 @@ if __name__ == "__main__":
         input_user = input("Enter Username : ")
         input_pwd = getpass.getpass("Enter Password : ")
         SERVER = input("Enter server : ")
-        if(authenticate.login(input_user, input_pwd, SERVER)):
+        if(authenticate.login(input_user, input_pwd, SERVER,True)):
             print("AUTHENTICATED. Hello", input_user)
             l = open(LOGFILE, "w")
             j["SERVER"] = SERVER

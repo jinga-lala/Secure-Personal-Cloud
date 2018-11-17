@@ -3,7 +3,7 @@ import os
 import requests
 import json
 import hashlib
-
+import en_de
 def decode(data):
     '''
     Returns bytestream from given string
@@ -31,9 +31,10 @@ def upload_file(path, pwd, user, server):
     '''
     file = open((pwd + path[1:]), "rb")
     data = file.read()
+    data = en_de.encrypt(data)
     encoded_data = encode(data)
     md5sum = get_md5_sum(encoded_data)
-    if encoded_data == "":
+    if encoded_data == "":      #TODO
         encoded_data = "IAo="  # Base64 for " " character
     payload = {'user': user, 'path': path, 'timestamp': os.path.getmtime(path), 'data': encoded_data,'md5sum':md5sum}
     post_data = json.dumps(payload)
@@ -69,10 +70,11 @@ def download_file(path, user, server):
         
         if(get_md5_sum(data.json()[0]["data"])==data.json()[0]["md5sum"]):
             print("File recieved okay")         #fix this
-            file=decode(data.json()[0]["data"])
-            return [decode(data.json()[0]["data"]), data.json()[0]["timestamp"]]  # fix this
+            file = decode(data.json()[0]["data"])
+            file = en_de.decrypt(file)
+            return [file, data.json()[0]["timestamp"]]  # fix this
         else:
-            print("Error in recieving file, tryin again")
+            print("Error in recieving file, trying again")
 
 def get_user_id(username, server):
     api_url = server + "userAPI/" + username + "/"
