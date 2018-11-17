@@ -14,3 +14,46 @@ Figure out how to use django to make a serrver for linux client
 Figure out how to tranfer files to sql database through linux, either through django or other means(socket programming)?
 Write as much of bash wrapper as possible to parse commands
 Figure out conflicts, keep updating gitignore file
+
+
+For Final Presentation-
+
+Linux-
+
+Given that it could be cumbersome to enter password every time, spc should store the username, password details locally. spc should have command to configure the authentication details.
+
+        $ spc config edit
+
+        Username:
+
+        Password:
+
+        Confirm Password:
+
+These details stored on client need not be encrypted for simplicity.
+
+
+progress bar of how much of total sync is done.
+
+All commands should print log to the terminal whenever they are are executed.
+
+Uploaded or downloaded files must be verified to be correct using md5sum (or using something similar).
+
+For files, only on either client or server, the operations to be done is obvious. However for files which are on both sets (but have different content), the client and the server, they are either exactly the same (checked with md5sum or any simple hash) or they are different.
+
+Sync with A should “lock” the sync operation while it is syncing and release it once it is done, so that  sync with other clients like B.
+
+You should also handle a deadlock situation where A dies due to some reason during its sync. When that happens sync operation will be permanently locked.
+
+En-De-
+Dump File,
+
+Periodic sync using linux daemons, if you choose to ask user in case of conflicts then periodic sync means prompting user to start sync at periodic intervals
+
+
+
+Web Client-
+
+A page to specify the decryption scheme and corresponding key(s)
+
+A page to view/download the content
