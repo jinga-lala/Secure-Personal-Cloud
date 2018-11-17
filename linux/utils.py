@@ -1,8 +1,7 @@
 import os
 import network_operations
 import difflib
-
-
+# import en_de
 def get_paths_of_uploads_and_downloads(pwd, server, username):
     paths_and_timestamps = network_operations.get_paths(server, username)
     user = network_operations.get_user_id(username, server)
@@ -24,7 +23,13 @@ def get_paths_of_uploads_and_downloads(pwd, server, username):
         else:
             p=pwd+i["path"][1:]
             f=open(p,"rb")
+            # f,length=en_de.encrypt(f.read())
+            '''
+            TODO - ditch the first 8/16 bytes, then calc md5sum
+            '''
             md5=network_operations.get_md5_sum(network_operations.encode(f.read()))
+            # print(i["md5sum"],md5)
+            # print(md5,i["md5sum"])
             if(i["md5sum"] != md5):
                 conflicts.append(i["path"])
     return([download_paths, upload_paths, conflicts, user])
@@ -156,7 +161,6 @@ def resolve_conflicts(paths, pwd, username, user_id, server):
                 network_operations.update_file(file[2:], pwd, username, server)
             if(choice == 'd'):
                 create_file(file, pwd, username, server)
-
 
 def die_with_usage():
     print("Enter a couple of args please")

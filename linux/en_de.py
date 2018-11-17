@@ -1,5 +1,5 @@
 import network_operations as net_ops
-from Crypto.Cipher import AES, Blowfish, CAST
+from Crypto.Cipher import AES, Salsa20
 from Crypto import Random
 import pickle
 import os
@@ -12,7 +12,7 @@ class encryption_data:
 		self.scheme = scheme
 		self.key = key
 
-def generate_schema(scheme="AES",key=""):
+def generate_schema(scheme="Salsa20",key=""):
 	# print("Generating scheme - AES")
 	if(key == ""):
 		key = Random.get_random_bytes(16)
@@ -27,7 +27,7 @@ def generate_schema(scheme="AES",key=""):
 			key = net_ops.decode(key[0:16])
 		else:
 			print("Key too short, enter a 16 character key.")
-	d = encryption_data("AES",key)
+	d = encryption_data(scheme,key)
 	f = open(PATH,"wb")
 	pickle.dump(d,f)
 	print("Generated a scheme")
@@ -47,8 +47,8 @@ def get_schema():
 		input_path = input("Enter the full path of the file : \n")
 		load_scheme(path)
 	else:
-		schemes = ['AES','Blowfish','CAST']
-		index = input("Enter the number corresponding to your encryption scheme :\n\t1. AES \n\t2. Blowfish \n\t3. CAST\n")
+		schemes = ['AES','Salsa20','CAST']
+		index = input("Enter the number corresponding to your encryption scheme :\n\t1. AES \n\t2. Salsa20 \n\t3. CAST\n")
 		scheme = schemes[int(index)-1]
 		key = input("Enter the key as a string : ")
 		generate_schema(scheme,key)
@@ -60,9 +60,14 @@ def encrypt(data):
 	scheme = enc_data.scheme
 	key = enc_data.key
 	if(scheme == "AES"):
-		iv = Random.new().read(AES.block_size)
+		iv = b'1'*(AES.block_size)
 		cipher = AES.new(key, AES.MODE_CFB, iv)
-		return iv + cipher.encrypt(data)
+		return [iv + cipher.encrypt(data),16]
+	elif scheme == "Salsa20":
+		cipher = Salsa20.new(key=key)
+		# nonce = b'1'*8
+		# print(len(cipher.nonce))
+		return [cipher.nonce + cipher.encrypt(data),8]
 	# if scheme == "Blowfish":
 	# 	iv = Random.new().read(bs)
 	# 	cipher = Blowfish.new(key, Blowfish.MODE_CBC, iv)
@@ -82,5 +87,10 @@ def decrypt(data):
 		iv = data[:AES.block_size]
 		cipher = AES.new(key, AES.MODE_CFB, iv)
 		return cipher.decrypt(data[AES.block_size:])
+	elif scheme == "Salsa20":
+		msg_nonce = data[:8]
+		ciphertext = data[8:]
+		cipher = Salsa20.new(key=key, nonce=msg_nonce)
+		return cipher.decrypt(ciphertext)
 
 

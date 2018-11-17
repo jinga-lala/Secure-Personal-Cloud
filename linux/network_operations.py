@@ -30,10 +30,15 @@ def upload_file(path, pwd, user, server):
     URL.
     '''
     file = open((pwd + path[1:]), "rb")
+    '''
+    TODO - Currently storing unencrypted md5sum...
+    '''
     data = file.read()
-    data = en_de.encrypt(data)
     encoded_data = encode(data)
     md5sum = get_md5_sum(encoded_data)
+    data,length = en_de.encrypt(data)
+    encoded_data = encode(data)
+
     if encoded_data == "":      #TODO
         encoded_data = "IAo="  # Base64 for " " character
     payload = {'user': user, 'path': path, 'timestamp': os.path.getmtime(path), 'data': encoded_data,'md5sum':md5sum}
@@ -67,11 +72,12 @@ def download_file(path, user, server):
         client = requests.session()
         data = client.get(api_url)
         # print(data.json())
-        
-        if(get_md5_sum(data.json()[0]["data"])==data.json()[0]["md5sum"]):
+        file = decode(data.json()[0]["data"])
+        file = en_de.decrypt(file)
+        # print(get_md5_sum(encode(file[8:])),data.json()[0]["md5sum"])
+        if(get_md5_sum(encode(file))==data.json()[0]["md5sum"]):
             print("File recieved okay")         #fix this
-            file = decode(data.json()[0]["data"])
-            file = en_de.decrypt(file)
+                
             return [file, data.json()[0]["timestamp"]]  # fix this
         else:
             print("Error in recieving file, trying again")
@@ -84,10 +90,12 @@ def get_user_id(username, server):
 
 
 def update_file(path, pwd, username, server):
-    file = open((pwd + path), "rb")
+    file = open((pwd +"/"+ path), "rb")
     data = file.read()
     encoded_data = encode(data)
-    md5sum=get_md5_sum(encoded_data)
+    md5sum = get_md5_sum(encoded_data)
+    data,length = en_de.encrypt(data)
+    encoded_data = encode(data)
     payload = {'path': path.replace(pwd, "."), 'timestamp': os.path.getmtime(path), 'data': encoded_data,'md5sum':md5sum}
     post_data = json.dumps(payload)
     headers = {'Content-type': 'application/json'}
