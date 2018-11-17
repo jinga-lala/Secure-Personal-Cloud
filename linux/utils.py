@@ -22,7 +22,10 @@ def get_paths_of_uploads_and_downloads(pwd, server, username):
         if(os.path.isfile(i["path"]) == False):
             download_paths.append(i["path"])
         else:
-            if(i["timestamp"] != os.path.getmtime(i["path"])):
+            p=pwd+i["path"][1:]
+            f=open(p,"rb")
+            md5=network_operations.get_md5_sum(network_operations.encode(f.read()))
+            if(i["md5sum"] != md5):
                 conflicts.append(i["path"])
     return([download_paths, upload_paths, conflicts, user])
 
@@ -37,7 +40,7 @@ def create_file(path, pwd, user, server):
     path = pwd + path[1:]
     file = open(path, "wb")
     file.write(data)
-    print(timestamp)
+    # print(timestamp)
     file.close()
     os.utime(path, (timestamp, timestamp))
 
@@ -63,16 +66,24 @@ def upload_files(paths, pwd, user, server):
 
 def status(pwd, server, username):
     to_be_downloaded, to_be_uploaded, conflicted, _ = get_paths_of_uploads_and_downloads(pwd, server, username)
-    print("\n", "Files not on server : ", "\n")
-    for path in to_be_uploaded:
-        print("\t", path)
-    print("\n", "Files not available locally : ", "\n")
-    for path in to_be_downloaded:
-        print("\t", path)
-    print("\n", "Conflicted files : ", "\n")
-    for path in conflicted:
-        print("\t", path)
-
+    f=0
+    if(len(to_be_uploaded)):
+        print("\n", "Files not on server : ", "\n")
+        f=1
+        for path in to_be_uploaded:
+            print("\t", path)
+    if(len(to_be_downloaded)):
+        print("\n", "Files not available locally : ", "\n")
+        f=1
+        for path in to_be_downloaded:
+            print("\t", path)
+    if(len(conflicted)):
+        f=1
+        print("\n", "Conflicted files : ", "\n")
+        for path in conflicted:
+            print("\t", path)
+    if(f == 0):
+        print("Up to date, no syncing required")
 
 def resolve_conflicts(paths, pwd, username, user_id, server):
     '''

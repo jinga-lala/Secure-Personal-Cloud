@@ -87,11 +87,14 @@ if __name__ == "__main__":
                 print("Authenticated")
                 a, b, c, d = utils.get_paths_of_uploads_and_downloads(pwd=PWD, server=SERVER, username=USER)
                 utils.status(PWD, SERVER, USER)
-                choice = input("Press y to continue , n to quit")
-                if(choice == "y"):
-                    utils.create_files(a, PWD, USER, SERVER)
-                    utils.upload_files(b, PWD, d, SERVER)
-                    utils.resolve_conflicts(c, PWD, USER, d, SERVER)
+                if(len(a) or len(b) or len(c)):
+                    choice = input("Press y to continue , n to quit : ")
+                    if(choice == "y"):
+                        utils.create_files(a, PWD, USER, SERVER)
+                        utils.upload_files(b, PWD, d, SERVER)
+                        utils.resolve_conflicts(c, PWD, USER, d, SERVER)
+                # else:
+                #     print("Directory already upto date")
             else:
                 print("Access Denied")
 

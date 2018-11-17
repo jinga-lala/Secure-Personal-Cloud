@@ -89,7 +89,7 @@ class FileListUserData(APIView):
         '''
         new_path = "./"+path
         user = User.objects.filter(username=user_id)
-        files = File.objects.filter(user=user[0], path=new_path).update(data=request.data["data"], timestamp= request.data["timestamp"])
+        files = File.objects.filter(user=user[0], path=new_path).update(data=request.data["data"], timestamp=request.data["timestamp"],md5sum=request.data["md5sum"])
         return Response(request.data, status=status.HTTP_201_CREATED)
 
 class UserId(APIView):
