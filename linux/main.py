@@ -6,6 +6,7 @@ import argparse
 import sys
 import json
 import getpass
+import en_de
 USER = ''
 SERVER = ''
 PWD = './'
@@ -66,6 +67,7 @@ if __name__ == "__main__":
             j["PWD"] = ""
             json.dump(j, l)
             l.close()
+            os.remove(en_de.PATH)
             print("Logged out successfully")
         if(sys.argv[1] == "status"):
             if(SERVER != "" and USER != "" and PWD != ""):

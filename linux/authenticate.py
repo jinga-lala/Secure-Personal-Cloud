@@ -21,7 +21,7 @@ def login(username,password,server):
 		if(len(l.json())):
 			en_de.get_schema()
 		else:
-			en_de.generate_schema(username)
+			en_de.generate_schema()
 			client = requests.session()
 			APIurl = server+"encAPI/"+username+"/"
 			l = client.post(APIurl)
