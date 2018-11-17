@@ -1,5 +1,5 @@
 import network_operations as net_ops
-from Crypto.Cipher import AES, Salsa20
+from Crypto.Cipher import AES, Salsa20, ChaCha20
 from Crypto import Random
 import pickle
 import os
@@ -12,10 +12,10 @@ class encryption_data:
 		self.scheme = scheme
 		self.key = key
 
-def generate_schema(scheme="Salsa20",key=""):
+def generate_schema(scheme="ChaCha20",key=""):
 	# print("Generating scheme - AES")
 	if(key == ""):
-		key = Random.get_random_bytes(16)
+		key = Random.get_random_bytes(32)
 		print("Your scheme is AES")
 		print("Your key is",net_ops.encode(key))
 		print("As if you will remember your key... Just copy the file 'crypto.dat' in your installation folder for your next login, or change your key")
@@ -48,7 +48,7 @@ def get_schema():
 		load_scheme(path)
 	else:
 		schemes = ['AES','Salsa20','CAST']
-		index = input("Enter the number corresponding to your encryption scheme :\n\t1. AES \n\t2. Salsa20 \n\t3. CAST\n")
+		index = input("Enter the number corresponding to your encryption scheme :\n\t1. AES \n\t2. Salsa20 \n\t3. ChaCha20\n")
 		scheme = schemes[int(index)-1]
 		key = input("Enter the key as a string : ")
 		generate_schema(scheme,key)
@@ -60,7 +60,7 @@ def encrypt(data):
 	scheme = enc_data.scheme
 	key = enc_data.key
 	if(scheme == "AES"):
-		iv = b'1'*(AES.block_size)
+		iv = b'1'*(AES.block_size)		#TODO
 		cipher = AES.new(key, AES.MODE_CFB, iv)
 		return [iv + cipher.encrypt(data),16]
 	elif scheme == "Salsa20":
@@ -68,6 +68,10 @@ def encrypt(data):
 		# nonce = b'1'*8
 		# print(len(cipher.nonce))
 		return [cipher.nonce + cipher.encrypt(data),8]
+	else:
+		cipher = ChaCha20.new(key=key)
+		ciphertext = cipher.encrypt(data)
+		return [cipher.nonce+ciphertext,8]
 	# if scheme == "Blowfish":
 	# 	iv = Random.new().read(bs)
 	# 	cipher = Blowfish.new(key, Blowfish.MODE_CBC, iv)
@@ -91,6 +95,11 @@ def decrypt(data):
 		msg_nonce = data[:8]
 		ciphertext = data[8:]
 		cipher = Salsa20.new(key=key, nonce=msg_nonce)
+		return cipher.decrypt(ciphertext)
+	else:
+		msg_nonce = data[:8]
+		ciphertext = data[8:]
+		cipher = ChaCha20.new(key=key, nonce=msg_nonce)
 		return cipher.decrypt(ciphertext)
 
 
