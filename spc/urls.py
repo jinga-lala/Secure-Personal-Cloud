@@ -32,6 +32,7 @@ urlpatterns = [
     url(r'^pathAPI/(?P<user_id>[a-zA-Z0-9\-\_^/]+)/$', views.FileListNotDataUser.as_view(), name='results'),
     url(r'^api/(?P<user_id>[a-zA-Z0-9\-\_]+)/(?P<path>.+)$', views.FileListUserData.as_view(), name='file'),
     url(r'^userAPI/(?P<user_id>[a-zA-Z0-9\-\_^/]+)/$', views.UserId.as_view(), name='user'),
+    url(r'^encAPI/(?P<user_id>[a-zA-Z0-9\-\_^/]+)/$', views.getEnc.as_view(), name='enc')
     ##TODO Error handling and security risks
 ]
 urlpatterns = format_suffix_patterns(urlpatterns)

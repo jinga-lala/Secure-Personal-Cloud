@@ -18,6 +18,9 @@ Figure out conflicts, keep updating gitignore file
 
 For Final Presentation-
 
+
+Optimize uploading files by removing userAPI
+
 Linux-
 
 Given that it could be cumbersome to enter password every time, spc should store the username, password details locally. spc should have command to configure the authentication details.

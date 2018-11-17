@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import  File
+from .models import  File,encryption
 
 class UserSerializer(serializers.ModelSerializer):
 	class Meta:
@@ -18,6 +18,16 @@ class FileSerializer(serializers.ModelSerializer):
 	# 	j = request.data
 	# 	u = UserSerializer(read_only=True)
 	# 	f = FileSerializer(read_only=True)
+
+
+
+class EncryptionSerializer(serializers.ModelSerializer):
+		
+		class Meta:
+			model = encryption
+			fields = ('user','encrypted')
+			
+
 
 
 class FileSerializerNotData(serializers.ModelSerializer):

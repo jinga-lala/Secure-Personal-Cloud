@@ -6,7 +6,7 @@ class File(models.Model):
    # username=models.CharField(max_length=1000)
     path = models.CharField(max_length=1000)
     data = models.CharField(max_length=10000000000)
-    md5sum=models.CharField(max_length=100)
+    md5sum = models.CharField(max_length=100)
     timestamp = models.FloatField()
     class Meta:
     	unique_together = (('user','path'),)
@@ -15,6 +15,8 @@ class File(models.Model):
     def __str__(self):
         return self.path
 
-
+class encryption(models.Model):
+    user = models.ForeignKey(User, default=1, on_delete=models.CASCADE)
+    encrypted = models.CharField(max_length=1)
 
 # Create your models here.

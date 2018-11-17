@@ -48,7 +48,7 @@ def upload_file(path, pwd, user, server):
 def get_paths(server, username):
     print("Getting Paths")
     api_url = server + "pathAPI/" + username  # fix this
-    print(api_url)
+    # print(api_url)
     client = requests.session()
     paths_and_timestamps = client.get(api_url)
     return(paths_and_timestamps.json())

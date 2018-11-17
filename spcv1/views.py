@@ -3,10 +3,11 @@ from  rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 from rest_framework import status
-from .models import File
+from .models import File,encryption
 from .serializer import FileSerializer
 from .serializer import FileSerializerNotData
 from .serializer import UserSerializer
+from .serializer import EncryptionSerializer
 from django.shortcuts import render
 from .forms import UserForm
 from django.http import HttpResponse
@@ -102,3 +103,25 @@ class UserId(APIView):
 
     def  post(self):
         pass
+
+class getEnc(APIView):
+
+    def get(self,request,user_id):
+        user = User.objects.filter(username=user_id)
+        # files = File.objects.filter(user=user[0])
+        enc = encryption.objects.filter(user=user[0])
+        serializer = EncryptionSerializer(enc, many=True)
+        return Response(serializer.data)
+
+    def  post(self,request,user_id):
+        user = User.objects.filter(username=user_id)
+        # files = File.objects.filter(user=user[0])
+        data={"user":user[0].id,"encrypted":"T"}
+        enc = EncryptionSerializer(data=data)
+        if enc.is_valid():
+            enc.save()
+            return Response(request.data, status=status.HTTP_201_CREATED)
+        return Response(enc.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        
+

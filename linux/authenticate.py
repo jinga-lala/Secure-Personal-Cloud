@@ -1,6 +1,6 @@
 import requests
 import main
-
+import en_de
 def login(username,password,server):
 	'''
 	Authenticates user
@@ -14,7 +14,17 @@ def login(username,password,server):
 	val=client.post(url_login, data=login_data)
 	print(val)
 	if(str(val.url)!=url_login):	#Exploiting redirection
-		main.USER=username
+		main.USER = username
+		client = requests.session()
+		APIurl = server+"encAPI/"+username+"/"
+		l = client.get(APIurl)
+		if(len(l.json())):
+			en_de.get_schema()
+		else:
+			en_de.generate_schema(username)
+			client = requests.session()
+			APIurl = server+"encAPI/"+username+"/"
+			l = client.post(APIurl)
 		return True
 	else:
 		return False
