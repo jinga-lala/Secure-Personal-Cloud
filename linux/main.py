@@ -123,7 +123,8 @@ if __name__ == "__main__":
 
             elif sys.argv[2] == "dump":
                 choice = input("The details of the scheme will soon appear on the screen. Do you really want that?\n")
-                if choice == "y":
+                choice=choice.lower()
+                if choice == "y" or choice== "yes":
                     en_de.disp_schema()
                 else:
                     print("Well okay then")   

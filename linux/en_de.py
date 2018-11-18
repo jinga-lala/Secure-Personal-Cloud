@@ -86,7 +86,8 @@ def load_scheme(path):
 
 def get_schema():
 	choice = input("Do you have a config file for the key? (Enter y/n) : \n")
-	if choice == "y" or choice == "Y":
+	choice=choice.lower()
+	if choice == "y" or choice == "Y" or choice == "yes":
 		input_path = input("Enter the full path of the file : \n")
 		load_scheme(input_path)
 	else:
@@ -94,7 +95,8 @@ def get_schema():
 		index = input("Enter the number corresponding to your encryption scheme :\n\t1. AES \n\t2. Salsa20 \n\t3. ChaCha20\n")
 		scheme = schemes[int(index)-1]
 		choice = input("Do you have a key?\n")
-		if(choice == "y"):
+		choice=choice.lower()
+		if(choice == "y" or choice=="yes"):
 			key = input("Enter the key as a string : ")
 		else:
 			key=""
