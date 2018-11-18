@@ -8,7 +8,10 @@ def decode(data):
     '''
     Returns bytestream from given string
     '''
-    return(base64.b64decode(data))
+    try:
+        return(base64.b64decode(data))
+    except:
+        raise ValueError("Pad correctly")
 
 
 def encode(data):

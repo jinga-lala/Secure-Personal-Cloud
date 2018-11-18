@@ -1,3 +1,6 @@
+'''
+TODO - Bug where encryption scheme cannot be changed without observe
+'''
 import network_operations as net_ops
 from Crypto.Cipher import AES, Salsa20, ChaCha20
 from Crypto import Random
@@ -23,18 +26,49 @@ def disp_schema():
 def generate_schema(scheme="ChaCha20",key=""):
 	# print("Generating scheme - AES")
 	if(key == ""):
-		key = Random.get_random_bytes(32)
-		print("Your scheme is AES")
+		if scheme == "ChaCha20":
+			key = Random.get_random_bytes(32)
+		else:
+			key = Random.get_random_bytes(16)
+		print("Your scheme is",scheme)
 		print("Your key is",net_ops.encode(key))
 		print("As if you will remember your key... Just copy the file 'crypto.dat' in your installation folder for your next login, or change your key")
 	else:
-		if len(key) >= 16:
+		while(len(key)%4):
+			key+="y" # = is a specia character in base64 encoding hence a hardoded word is used
+
+		if scheme == "AES" or scheme == "Salsa20":
 			'''
-			Key is uniformly 16 bytes, TODO
+			The code handles keys of all lengths
 			'''
-			key = net_ops.decode(key[0:16])
-		else:
-			print("Key too short, enter a 16 character key.")
+			print(len(key))
+			try:
+				if len(net_ops.decode(key))>=16:
+					key = net_ops.decode(key)[0:16]
+				else:
+					print("Key too short, enter a 24 character key.")
+					key = input("Enter a longer key : ")
+					generate_schema(scheme,key)
+					return
+			except ValueError as e:			#TODO
+				print("Your key is not compliant. Do not use spaces or special characters...")
+				key = input("Enter a key : ")
+				generate_schema(scheme,key)
+				return
+		elif scheme == "ChaCha20":
+			try:
+				if len(net_ops.decode(key)) >= 32:
+					key = net_ops.decode(key)[0:32]
+				else:
+					print("Key too short, enter a 48 character key.")
+					key = input("Enter a longer key : ")
+					generate_schema(scheme,key)
+					return
+			except ValueError as e:
+				print("Your key is not compliant. Do not use spaces or special characters...")
+				key = input("Enter a key : ")
+				generate_schema(scheme,key)
+				return
 	d = encryption_data(scheme,key)
 	f = open(PATH,"wb")
 	pickle.dump(d,f)
@@ -43,7 +77,7 @@ def generate_schema(scheme="ChaCha20",key=""):
 
 def load_scheme(path):
 	f = open(path,"rb")
-	data = file.read()
+	data = f.read()
 	f.close()
 	f = open(PATH,"wb")
 	f.write(data)
@@ -54,9 +88,9 @@ def get_schema():
 	choice = input("Do you have a config file for the key? (Enter y/n) : \n")
 	if choice == "y" or choice == "Y":
 		input_path = input("Enter the full path of the file : \n")
-		load_scheme(path)
+		load_scheme(input_path)
 	else:
-		schemes = ['AES','Salsa20','CAST']
+		schemes = ['AES','Salsa20','ChaCha20']
 		index = input("Enter the number corresponding to your encryption scheme :\n\t1. AES \n\t2. Salsa20 \n\t3. ChaCha20\n")
 		scheme = schemes[int(index)-1]
 		choice = input("Do you have a key?\n")
@@ -74,7 +108,7 @@ def encrypt(data):
 	scheme = enc_data.scheme
 	key = enc_data.key
 	if(scheme == "AES"):
-		iv = b'1'*(AES.block_size)		#TODO
+		iv = Random.new().read(AES.block_size)	#TODO
 		cipher = AES.new(key, AES.MODE_CFB, iv)
 		return [iv + cipher.encrypt(data),16]
 	elif scheme == "Salsa20":
