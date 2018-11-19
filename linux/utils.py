@@ -34,6 +34,7 @@ def get_paths_of_uploads_and_downloads(pwd, server, username,update=False):
             # print(md5,i["md5sum"])
             if(i["md5sum"] != md5):
                 conflicts.append(i["path"])
+      
     return([download_paths, upload_paths, conflicts, user])
 
 
@@ -41,6 +42,7 @@ def create_file(path, pwd, user, server):
     data, timestamp = network_operations.download_file(path[2:], user, server)
     path = pwd + path[1:]
     directory = "/".join(path.split("/")[:-1]) + "/"
+    directory.replace("%20"," ")
     print(directory)
     try:
         os.makedirs(directory)
