@@ -27,7 +27,7 @@ def get_md5_sum(file):
     return hashlib.md5(file.encode('utf-8')).hexdigest()
 
 
-def upload_file(path, pwd, user, server,key_path):
+def upload_file(path, pwd, user, server,key_path,shared=False):
     '''
     Uploads file given a dict of user, path of file and server
     URL.
@@ -48,7 +48,11 @@ def upload_file(path, pwd, user, server,key_path):
 
     if encoded_data == "":      #TODO
         encoded_data = "IAo="  # Base64 for " " character
-    payload = {'user': user, 'path': path, 'timestamp': os.path.getmtime(path), 'data': encoded_data,'md5sum':md5sum}
+    if shared == False:
+        safe = "Y"
+    else:
+        safe = "N"
+    payload = {'user': user, 'path': path, 'timestamp': os.path.getmtime(path), 'data': encoded_data,'md5sum':md5sum,'safe':safe}
     post_data = json.dumps(payload)
     headers = {'Content-type': 'application/json'}
     api_url = server + "api/"
@@ -118,6 +122,7 @@ def send_sharing_file(server,data):
         return p
     else:
         print("File doesn't exist on the server...")
+
 def check_for_files(reciever,server):
     api_url = server + "shareAPI/" + reciever + "/recieved"
     client = requests.session()
@@ -133,7 +138,7 @@ def update_file(path, pwd, username, server):
     md5sum = get_md5_sum(encoded_data)
     data,length = en_de.encrypt(data)
     encoded_data = encode(data)
-    payload = {'path': path.replace(pwd, "."), 'timestamp': os.path.getmtime(path), 'data': encoded_data,'md5sum':md5sum}
+    payload = {'path': path.replace(pwd, "."), 'timestamp': os.path.getmtime(path), 'data': encoded_data,'md5sum':md5sum,'safe':'Y'}
     post_data = json.dumps(payload)
     headers = {'Content-type': 'application/json'}
     api_url = server + "api/" + username + "/" + path

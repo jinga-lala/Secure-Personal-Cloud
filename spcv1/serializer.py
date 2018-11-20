@@ -11,7 +11,7 @@ class FileSerializer(serializers.ModelSerializer):
 	#user = UserSerializer()
 	class Meta:
 		model = File
-		fields = ('user', 'path', 'timestamp','data','md5sum')
+		fields = ('user', 'path', 'timestamp','data','md5sum','safe')
 		
 
 	# def create(self, request):

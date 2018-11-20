@@ -81,7 +81,9 @@ if __name__ == "__main__":
             os.remove(en_de.PATH)
             print("Logged out successfully")
         if(sys.argv[1] == "status"):
+
             if(SERVER != "" and USER != "" and PWD != ""):
+                utils.recieve_files(USER,PWD,SERVER)
                 utils.status(PWD, SERVER, USER)
             # elif USER == "":
             #     print("Login first")
@@ -97,7 +99,9 @@ if __name__ == "__main__":
         if(sys.argv[1] == "sync"):
             input_pwd = getpass.getpass("Enter your Password : ")
             if(authenticate.login(USER, input_pwd, SERVER)):
+
                 print("Authenticated")
+                utils.recieve_files(USER,PWD,SERVER)
                 a, b, c, d = utils.get_paths_of_uploads_and_downloads(pwd=PWD, server=SERVER, username=USER)
                 utils.status(PWD, SERVER, USER)
                 if(len(a) or len(b) or len(c)):

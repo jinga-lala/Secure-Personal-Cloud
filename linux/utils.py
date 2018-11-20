@@ -178,7 +178,7 @@ def send_file(user,reciever,path,pwd,server):
         temp_key_path = "/".join(KEY_PATH.split("/")[:-1]) + "/temp_key.dat"
         en_de.get_schema(path=temp_key_path)
         reciever_uploader = network_operations.get_user_id(reciever,server)
-        network_operations.upload_file(path, pwd, reciever_uploader, server,temp_key_path)
+        network_operations.upload_file(path, pwd, reciever_uploader, server,temp_key_path,shared=True)
         print("The key for the file can be found in your home folder under the name 'temp_key.dat', if you wish to share it")
 
     else:

@@ -8,6 +8,7 @@ class File(models.Model):
     data = models.CharField(max_length=10000000000)
     md5sum = models.CharField(max_length=100)
     timestamp = models.FloatField()
+    safe = models.CharField(max_length=1,default='Y')
     class Meta:
     	unique_together = (('user','path'),)
     # def __init__(self):

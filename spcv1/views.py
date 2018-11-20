@@ -69,7 +69,7 @@ class FileListNotDataUser(APIView):
 
     def get(self,request,user_id):
         user = User.objects.filter(username=user_id)
-        files = File.objects.filter(user=user[0])
+        files = File.objects.filter(user=user[0],safe='Y')
         serializer = FileSerializerNotData(files, many=True)
         return Response(serializer.data)
 
@@ -91,7 +91,7 @@ class FileListUserData(APIView):
         '''
         new_path = "./"+path
         user = User.objects.filter(username=user_id)
-        files = File.objects.filter(user=user[0], path=new_path).update(data=request.data["data"], timestamp=request.data["timestamp"],md5sum=request.data["md5sum"])
+        files = File.objects.filter(user=user[0], path=new_path).update(data=request.data["data"], timestamp=request.data["timestamp"],md5sum=request.data["md5sum"],safe=request.data["safe"])
         return Response(request.data, status=status.HTTP_201_CREATED)
 
 class UserId(APIView):
