@@ -33,6 +33,13 @@ def signup(request):
         form = UserCreationForm()
     return render(request, 'signup.html', {'form': form})
 
+def FileTree(request):
+    files = File.objects.all()
+    paths=[]
+    for file in files:
+        filepath = file.path[2:]
+        paths.append(filepath)
+    return render(request, 'files.html',{'paths': paths})
 
 
 #List all users, with their file paths and time-stamp
@@ -123,5 +130,5 @@ class getEnc(APIView):
             return Response(request.data, status=status.HTTP_201_CREATED)
         return Response(enc.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        
+
 

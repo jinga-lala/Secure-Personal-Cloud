@@ -1,0 +1,63 @@
+<html>
+<head>
+    <title> Files on Server </title>
+</head>
+
+<body>
+     <script type="text/javascript">
+
+        var paths = {{ paths|safe }};
+        // {% for link in paths %}
+        //     // paths.push({{ path }});
+        //     document.write("Hey")
+        // {% endfor %}
+        //paths.push("A/B/Hello.txt")
+
+        //document.write(paths.length);
+        var hierarchy = paths.reduce(function(hier,path){
+            var x = hier;
+            path.split('/').forEach(function(item){
+                if(!x[item]){
+                    x[item] = {};
+                }
+                x = x[item];
+            });
+            x.path = path;
+            return hier;
+        }, {});
+
+        var makeul = function(hierarchy, classname){
+            var dirs = Object.keys(hierarchy);
+            var ul = '<ul';
+            if(classname){
+                ul += ' class="' + classname + '"';
+            }
+            ul += '>\n';
+            dirs.forEach(function(dir){
+                var path = hierarchy[dir].path;
+                if(path){ // file
+                    ul += '<li class="file" data-url="' + path + '">' + dir + '</li>\n';
+                }else{
+                    ul += '<li class="folder">' + dir + '\n';
+                    ul += makeul(hierarchy[dir]);
+                    ul += '</li>\n';
+                }
+            });
+            ul += '</ul>\n';
+            return ul;
+        };
+
+        document.write(makeul(hierarchy, 'base-UL'))
+
+    </script>
+<!--  <ul>
+  {% for link in paths %}
+    <li>{{ link }}</li>
+  {% endfor %}
+</ul> -->
+</body>
+</html>
+
+
+
+

@@ -9,10 +9,15 @@ Each client has a gitignore kind of file, which has encryption schema, each file
 
 Path is relative path, relative to spc observe
 
-//TODO 
-Figure out how to use django to make a serrver for linux client - DONE
+//TODO
+Figure out how to use django to make a server for linux client - DONE
 Figure out how to tranfer files to sql database through linux, either through django or other means(socket programming)?	- REST API POST REQUEST  -  DONE
-Write as much of bash wrapper as possible to parse commands	- Khem  
+Write as much of bash wrapper as possible to parse commands	- Khem
 Figure out conflicts, keep updating gitignore file
 Make APIs, make POST function in APIs, filter with API  -  DONE
 MD5Sum
+--NEW
+Find how to display directory structure given the list of files.
+
+//Some Ideas
+For making the key accessible to all the clients of the user, we can fix an encryption system for the decryption the key using password of the user as a key for this and then store the encrypted key in the User Model. So when the same user logs in on a different machnine we can decrypt the key for decryption and check whether it matches with the previous key or not.
