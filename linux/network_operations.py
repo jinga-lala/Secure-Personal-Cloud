@@ -27,21 +27,23 @@ def get_md5_sum(file):
     return hashlib.md5(file.encode('utf-8')).hexdigest()
 
 
-def upload_file(path, pwd, user, server):
+def upload_file(path, pwd, user, server,key_path):
     '''
     Uploads file given a dict of user, path of file and server
     URL.
     '''
-    file = open((pwd + path[1:]), "rb")
+    try:
+        file = open((pwd + path[1:]), "rb")
     # print(file)
-    '''
-    TODO - Currently storing unencrypted md5sum...
-    '''
+    except FileNotFoundError:
+        print(path," not found")
+        return
+    # print(user)
     data = file.read()
     file.close()
     encoded_data = encode(data)
     md5sum = get_md5_sum(encoded_data)
-    data,length = en_de.encrypt(data)
+    data,length = en_de.encrypt(data,key_path)
     encoded_data = encode(data)
 
     if encoded_data == "":      #TODO
@@ -88,7 +90,7 @@ def download_file(path, user, server,key_path,shared=False):
         # print(data.json())
         file = decode(data.json()[0]["data"])
         file = en_de.decrypt(file,key_path)
-        os.remove(key_path)
+        # os.remove(key_path)
         # print(get_md5_sum(encode(file[8:])),data.json()[0]["md5sum"])
         if(get_md5_sum(encode(file))==data.json()[0]["md5sum"]):
             print("File recieved okay")         #fix this

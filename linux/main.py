@@ -23,6 +23,9 @@ if __name__ == "__main__":
     PWD = j["PWD"]
     AUTHENTICATED = j["AUTHENTICATED"]
     # print((AUTHENTICATED=="False"),len(sys.argv))
+    if(PWD==""):
+        PWD="./"
+
     if(len(sys.argv) == 1 and AUTHENTICATED == True):
         l = open(LOGFILE, "r")
         j = json.load(l)

@@ -43,7 +43,7 @@ def create_file(path, pwd, user, server,key_path=KEY_PATH,shared=False):
     data, timestamp = network_operations.download_file(path[2:], user, server,key_path,shared)
     path = pwd + path[1:]
     directory = "/".join(path.split("/")[:-1]) + "/"
-    print(directory)
+    # print(directory)
     try:
         os.makedirs(directory)
     except FileExistsError:
@@ -71,7 +71,7 @@ def upload_files(paths, pwd, user, server):
     '''
     for path in paths:
         print("Uploading ", path)
-        network_operations.upload_file(path, pwd, user, server)
+        network_operations.upload_file(path, pwd, user, server,KEY_PATH)
 
 
 def status(pwd, server, username):
@@ -173,6 +173,14 @@ def send_file(user,reciever,path,pwd,server):
     if(network_operations.get_user_id(reciever,server) != -1):
         data = {"sender":user,"reciever":reciever,"path":path}
         network_operations.send_sharing_file(server,data)
+        create_file(path, pwd, user, server)
+        print("Generating a shared key for ",path)
+        temp_key_path = "/".join(KEY_PATH.split("/")[:-1]) + "/temp_key.dat"
+        en_de.get_schema(path=temp_key_path)
+        reciever_uploader = network_operations.get_user_id(reciever,server)
+        network_operations.upload_file(path, pwd, reciever_uploader, server,temp_key_path)
+        print("The key for the file can be found in your home folder under the name 'temp_key.dat', if you wish to share it")
+
     else:
         print("Enter a valid user")
 
@@ -193,10 +201,14 @@ def recieve_files(reciever,pwd,server):
                 en_de.get_schema(path=key_path)
                 for file in shared_with_me[x]:
                     print("Downloading ",file)
-                    create_file(file,pwd,x,server,key_path,True)
+                    create_file(file,pwd,reciever,server,key_path,True)
                     network_operations.recieved_shared(reciever,file,server)
                     print("Backing file up...")
-                    network_operations.upload_file(file, pwd, reciever, server)
+                    # reciever_uploader = network_operations.get_user_id(reciever,server)
+                    # if (file in [x["path"] for x in get_paths(server,data["sender"])]):
+                        # print("There is a conflict in ",file,". \nResolve and resync with the server")
+                    # else:
+                    network_operations.update_file(file[2:], pwd, reciever, server)
 
 
 def die_with_usage():
