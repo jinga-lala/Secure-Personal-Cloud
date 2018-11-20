@@ -34,12 +34,14 @@ def signup(request):
     return render(request, 'signup.html', {'form': form})
 
 def FileTree(request):
-    files = File.objects.all()
+    uid = request.GET.get('id')
+    users = User.objects.filter(id = uid)
+    files = File.objects.filter(user=users[0])
     paths=[]
     for file in files:
         filepath = file.path[2:]
         paths.append(filepath)
-    return render(request, 'files.html',{'paths': paths})
+    return render(request, 'files.html', {'paths': paths})
 
 
 #List all users, with their file paths and time-stamp

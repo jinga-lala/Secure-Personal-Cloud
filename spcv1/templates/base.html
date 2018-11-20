@@ -2,13 +2,14 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>{% block title %}Simple is Better Than Complex{% endblock %}</title>
+    <title>{% block title %}Secure Personal Cloud{% endblock %}</title>
   </head>
   <body>
     <header>
       <h1>My Site</h1>
       {% if user.is_authenticated %}
-        <a href="{% url 'logout' %}">logout</a>
+        <a href="{% url 'logout' %}">logout</a> <br>
+        <a href="{% url 'files' %}?id={{ user.id }}"> Files Stored on Server </a>s
       {% else %}
         <a href="{% url 'login' %}">login</a> / <a href="{% url 'signup' %}">signup</a>
       {% endif %}

@@ -2,14 +2,17 @@
 <head>
     <title> Files on Server </title>
 </head>
-
 <body>
+
+
+
      <script type="text/javascript">
 
         var paths = {{ paths|safe }};
+        // var paths = [];
         // {% for link in paths %}
-        //     // paths.push({{ path }});
-        //     document.write("Hey")
+        //     paths.push({{ path|safe }});
+        //     //document.write("Hey")
         // {% endfor %}
         //paths.push("A/B/Hello.txt")
 
