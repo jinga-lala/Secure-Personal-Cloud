@@ -19,4 +19,8 @@ class encryption(models.Model):
     user = models.ForeignKey(User, default=1, on_delete=models.CASCADE)
     encrypted = models.CharField(max_length=1)
 
+class shared_files(models.Model):
+    sender = models.CharField(max_length=100)   #TODO
+    reciever = models.CharField(max_length=100)
+    path = models.CharField(max_length=100)
 # Create your models here.

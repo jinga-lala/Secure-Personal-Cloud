@@ -26,7 +26,7 @@ SECRET_KEY = '+$+r$s)qbb+0lhbqx2#1p%cvb37@hpr&h%by46%wb_1wcp&5z='
 DEBUG = True
 LOGIN_REDIRECT_URL='/spc/'
 LOGOUT_REDIRECT_URL='/spc/'
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
