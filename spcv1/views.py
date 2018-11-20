@@ -34,7 +34,7 @@ def signup(request):
     return render(request, 'signup.html', {'form': form})
 
 def FileTree(request):
-    uid = request.GET.get('id')
+    uid = request.POST.get('id')
     users = User.objects.filter(id = uid)
     files = File.objects.filter(user=users[0])
     paths=[]
