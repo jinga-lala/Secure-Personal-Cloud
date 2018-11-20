@@ -23,7 +23,7 @@ def disp_schema():
 	f = open(PATH,"rb")
 	enc_data = pickle.load(f)
 	print(enc_data)
-def generate_schema(scheme="ChaCha20",key=""):
+def generate_schema(scheme="ChaCha20",key="",path=PATH):
 	# print("Generating scheme - AES")
 	if(key == ""):
 		if scheme == "ChaCha20":
@@ -70,25 +70,25 @@ def generate_schema(scheme="ChaCha20",key=""):
 				generate_schema(scheme,key)
 				return
 	d = encryption_data(scheme,key)
-	f = open(PATH,"wb")
+	f = open(path,"wb")
 	pickle.dump(d,f)
 	f.close()
 	print("Generated a scheme")
 
-def load_scheme(path):
+def load_scheme(path,dump=PATH):
 	f = open(path,"rb")
 	data = f.read()
 	f.close()
-	f = open(PATH,"wb")
+	f = open(dump,"wb")
 	f.write(data)
 	f.close()
 
 
-def get_schema():
+def get_schema(path=PATH):
 	choice = input("Do you have a config file for the key? (Enter y/n) : \n")
 	if choice == "y" or choice == "Y":
 		input_path = input("Enter the full path of the file : \n")
-		load_scheme(input_path)
+		load_scheme(input_path,path)
 	else:
 		schemes = ['AES','Salsa20','ChaCha20']
 		index = input("Enter the number corresponding to your encryption scheme :\n\t1. AES \n\t2. Salsa20 \n\t3. ChaCha20\n")
@@ -98,11 +98,11 @@ def get_schema():
 			key = input("Enter the key as a string : ")
 		else:
 			key=""
-		generate_schema(scheme,key)
+		generate_schema(scheme,key,path)
 
 
-def encrypt(data):
-	f = open(PATH,"rb")
+def encrypt(data,path=PATH):
+	f = open(path,"rb")
 	enc_data = pickle.load(f)
 	print(enc_data)
 	scheme = enc_data.scheme
@@ -131,8 +131,8 @@ def encrypt(data):
 	# 	return iv + cipher.encrypt(data + padding)
 	# if scheme == "CAST":
 
-def decrypt(data):
-	f = open(PATH,"rb")
+def decrypt(data,path=PATH):
+	f = open(path,"rb")
 	enc_data = pickle.load(f)
 	print(enc_data)
 	scheme = enc_data.scheme

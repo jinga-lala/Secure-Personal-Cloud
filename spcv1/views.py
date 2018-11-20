@@ -147,6 +147,6 @@ class FileShareAPI(APIView):
             return Response(enc.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
             j = request.data
-            file = shared_files.filter(reciever=user_id,path=j["path"]).delete()
+            file = shared_files.objects.filter(reciever=user_id,path=j["path"]).delete()
             return Response(request.data, status=status.HTTP_201_CREATED)
-            return Response(enc.errors, status=status.HTTP_400_BAD_REQUEST)
+            # return Response(enc.errors, status=status.HTTP_400_BAD_REQUEST)

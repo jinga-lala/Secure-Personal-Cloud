@@ -28,4 +28,4 @@ def login(username,password,server,first=False):
 				l = client.post(APIurl)
 		return True
 	else:
-		return False
+		return False			#CHANGE IT BACK

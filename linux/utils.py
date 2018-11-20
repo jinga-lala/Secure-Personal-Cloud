@@ -1,7 +1,9 @@
 import os
 import network_operations
 import difflib
-# import en_de
+import en_de
+KEY_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "crypto.dat")
+
 def get_paths_of_uploads_and_downloads(pwd, server, username,update=False):
     paths_and_timestamps = network_operations.get_paths(server, username)
     user = network_operations.get_user_id(username, server)
@@ -37,8 +39,8 @@ def get_paths_of_uploads_and_downloads(pwd, server, username,update=False):
     return([download_paths, upload_paths, conflicts, user])
 
 
-def create_file(path, pwd, user, server):
-    data, timestamp = network_operations.download_file(path[2:], user, server)
+def create_file(path, pwd, user, server,key_path=KEY_PATH,shared=False):
+    data, timestamp = network_operations.download_file(path[2:], user, server,key_path,shared)
     path = pwd + path[1:]
     directory = "/".join(path.split("/")[:-1]) + "/"
     print(directory)
@@ -53,14 +55,14 @@ def create_file(path, pwd, user, server):
     # os.utime(path, (timestamp, timestamp))
 
 
-def create_files(paths, pwd, user, server):
+def create_files(paths, pwd, user, server,key_path=KEY_PATH,shared=False):
     '''
     Downloads files from given list of paths, creates directories and saves them
     Use on download_paths[]
     '''
     for path in paths:
         print("Downloading ", path)
-        create_file(path, pwd, user, server)
+        create_file(path, pwd, user, server,key_path,shared)
 
 
 def upload_files(paths, pwd, user, server):
@@ -110,7 +112,7 @@ def resolve_conflicts(paths, pwd, username, user_id, server):
                 if(choice == 'd'):
                     create_file(file, pwd, username, server)
             else:
-                contents, _ = network_operations.download_file(file[2:], username, server)
+                contents, _ = network_operations.download_file(file[2:], username, server,KEY_PATH)
                 fileb = open("./buff_diff.txt", "wb")
                 fileb.write(contents)
                 fileb.close()
@@ -140,7 +142,7 @@ def resolve_conflicts(paths, pwd, username, user_id, server):
             '''
             Diff here
             '''
-            contents, _ = network_operations.download_file(file[2:], username, server)
+            contents, _ = network_operations.download_file(file[2:], username, server,KEY_PATH)
             fileb = open("./buff_diff.txt", "wb")
             fileb.write(contents)
             fileb.close()
@@ -164,6 +166,38 @@ def resolve_conflicts(paths, pwd, username, user_id, server):
                 network_operations.update_file(file[2:], pwd, username, server)
             if(choice == 'd'):
                 create_file(file, pwd, username, server)
+
+def send_file(user,reciever,path,pwd,server):
+    '''
+    '''
+    if(network_operations.get_user_id(reciever,server) != -1):
+        data = {"sender":user,"reciever":reciever,"path":path}
+        network_operations.send_sharing_file(server,data)
+    else:
+        print("Enter a valid user")
+
+def recieve_files(reciever,pwd,server):
+    files = network_operations.check_for_files(reciever,server)
+    if(len(files)):
+        shared_with_me = {}
+        for x in files:
+            try:
+                shared_with_me[x["sender"]].append(x["path"])
+            except:
+                shared_with_me.update({x["sender"]:[x["path"]]})
+        for x in shared_with_me:
+            print("User ",x," has sent you",len(shared_with_me[x])," file(s)")
+            choice = input("Do you want to download them? (Make sure you have the key...)")
+            if(choice.lower() == "y" or choice.lower() == "yes"):
+                key_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "temp_key.dat")
+                en_de.get_schema(path=key_path)
+                for file in shared_with_me[x]:
+                    print("Downloading ",file)
+                    create_file(file,pwd,x,server,key_path,True)
+                    network_operations.recieved_shared(reciever,file,server)
+                    print("Backing file up...")
+                    network_operations.upload_file(file, pwd, reciever, server)
+
 
 def die_with_usage():
     print("Enter a couple of args please")

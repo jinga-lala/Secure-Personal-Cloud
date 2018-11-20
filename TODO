@@ -60,3 +60,14 @@ Web Client-
 A page to specify the decryption scheme and corresponding key(s)
 
 A page to view/download the content
+
+
+File sharing game plan-
+	User sends a message to spc with others name and file path
+	Backend - an entry is created with the two users and path
+	Other user logs in, sharede_file table gives him prompt,
+	If yes-
+		api call to initial user
+		decrypt and save
+		encrypt and send
+		check for path conflicts

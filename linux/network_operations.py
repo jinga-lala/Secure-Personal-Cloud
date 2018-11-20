@@ -33,7 +33,7 @@ def upload_file(path, pwd, user, server):
     URL.
     '''
     file = open((pwd + path[1:]), "rb")
-    print(file)
+    # print(file)
     '''
     TODO - Currently storing unencrypted md5sum...
     '''
@@ -64,8 +64,17 @@ def get_paths(server, username):
     paths_and_timestamps = client.get(api_url)
     return(paths_and_timestamps.json())
 
+def recieved_shared(user,path,server):
+    data = {"path":path}
+    api_url = server + "shareAPI/" + user +"/recieve"
+    client = requests.session()
+    post_data = json.dumps(data)
+    # print(api_url,post_data)
+    headers = {'Content-type': 'application/json'}
+    p = client.post(api_url, data=post_data, headers=headers)
+    return p
 
-def download_file(path, user, server):
+def download_file(path, user, server,key_path,shared=False):
     '''
     Get paths, check whether those paths exist, if they don't, we download,
     if there are extraneous paths, we upload.
@@ -78,11 +87,12 @@ def download_file(path, user, server):
         data = client.get(api_url)
         # print(data.json())
         file = decode(data.json()[0]["data"])
-        file = en_de.decrypt(file)
+        file = en_de.decrypt(file,key_path)
+        os.remove(key_path)
         # print(get_md5_sum(encode(file[8:])),data.json()[0]["md5sum"])
         if(get_md5_sum(encode(file))==data.json()[0]["md5sum"]):
             print("File recieved okay")         #fix this
-                
+            # print(shared)
             return [file, data.json()[0]["timestamp"]]  # fix this
         else:
             print("Error in recieving file, trying again")
@@ -91,7 +101,26 @@ def get_user_id(username, server):
     api_url = server + "userAPI/" + username + "/"
     client = requests.session()
     data = client.get(api_url)
-    return(data.json()[0]["id"])
+    try:
+        return(data.json()[0]["id"])
+    except:
+        return -1
+
+def send_sharing_file(server,data):
+    api_url = server + "shareAPI/" + data["sender"] +"/send"
+    if(data["path"] in [x["path"] for x in get_paths(server,data["sender"])]):
+        client = requests.session()
+        post_data = json.dumps(data)
+        headers = {'Content-type': 'application/json'}
+        p = client.post(api_url, data=post_data, headers=headers)
+        return p
+    else:
+        print("File doesn't exist on the server...")
+def check_for_files(reciever,server):
+    api_url = server + "shareAPI/" + reciever + "/recieved"
+    client = requests.session()
+    data = client.get(api_url)
+    return(data.json()) 
 
 
 def update_file(path, pwd, username, server):

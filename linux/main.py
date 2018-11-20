@@ -28,6 +28,7 @@ if __name__ == "__main__":
         j = json.load(l)
         user = j["USER"]
         print('You are already logged in as ' + user)
+        utils.recieve_files(USER,PWD,SERVER)
         l.close()
     elif(len(sys.argv) == 1 and AUTHENTICATED == False):
         input_user = input("Enter Username : ")
@@ -49,6 +50,12 @@ if __name__ == "__main__":
             json.dump(j, l)
             l.close()
     elif(AUTHENTICATED == True):
+        if(sys.argv[1] == "check_for_files"):
+            utils.recieve_files(USER,PWD,SERVER)
+        if(sys.argv[1] == "send_file"):
+            reciever = input("Enter the reciever : ")
+            path = input("Enter the relative path of the file (provided it is backed up) : ")
+            utils.send_file(USER,reciever,path,PWD,SERVER)
         if(sys.argv[1] == "set-url"):
             if(len(sys.argv) < 3):
                 utils.die_with_usage()
