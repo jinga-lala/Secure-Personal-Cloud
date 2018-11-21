@@ -6,7 +6,7 @@ from Crypto.Cipher import AES, Salsa20, ChaCha20
 from Crypto import Random
 import pickle
 import os
-
+import subprocess
 DEFAULT_SCHEME = "AES"
 PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "crypto.dat")
 
@@ -15,7 +15,7 @@ class encryption_data:
 		self.scheme = scheme
 		self.key = key
 	def __str__(self):
-		return("Encryption Scheme : "+self.scheme+"\nKey : "+net_ops.encode(self.key))
+		return("Encryption Scheme : "+self.scheme+"\nKey : "+(net_ops.encode(self.key)))
 
 def list():
 	index = print("These are the available encryption schemes :\n\t1. AES \n\t2. Salsa20 \n\t3. ChaCha20\n")	
@@ -101,26 +101,31 @@ def get_schema(path=PATH):
 		generate_schema(scheme,key,path)
 
 
-def encrypt(data,path=PATH):
-	f = open(path,"rb")
+def encrypt(path,key_path=PATH):
+	f = open(key_path,"rb")
 	enc_data = pickle.load(f)
-	print(enc_data)
+	# print(enc_data)
 	scheme = enc_data.scheme
-	key = enc_data.key
-	if(scheme == "AES"):
-		iv = Random.new().read(AES.block_size)	#TODO
-		cipher = AES.new(key, AES.MODE_CFB, iv)
-		return [iv + cipher.encrypt(data),16]
-	elif scheme == "Salsa20":
-		cipher = Salsa20.new(key=key)
-		# nonce = b'1'*8
-		# print(len(cipher.nonce))
-		return [cipher.nonce + cipher.encrypt(data),8]
-	else:
-		cipher = ChaCha20.new(key=key)
-		ciphertext = cipher.encrypt(data)
-		return [cipher.nonce+ciphertext,8]
+	key = enc_data.key.hex()
+	print(key)
 	f.close()
+	bash_command = "bash ./encrypt_decrypt.sh en "+scheme+" "+key+" "+path+" "+path+".enc"
+	subprocess.run(bash_command,shell=True,check=False)
+	# print(type(key))
+	# if(scheme == "AES"):
+	# 	iv = Random.new().read(AES.block_size)	#TODO
+	# 	cipher = AES.new(key, AES.MODE_CFB, iv)
+	# 	return [iv + cipher.encrypt(data),16]
+	# elif scheme == "Salsa20":
+	# 	cipher = Salsa20.new(key=key)
+	# 	# nonce = b'1'*8
+	# 	# print(len(cipher.nonce))
+	# 	return [cipher.nonce + cipher.encrypt(data),8]
+	# else:
+	# 	cipher = ChaCha20.new(key=key)
+	# 	ciphertext = cipher.encrypt(data)
+	# 	return [cipher.nonce+ciphertext,8]
+	# f.close()
 	# if scheme == "Blowfish":
 	# 	iv = Random.new().read(bs)
 	# 	cipher = Blowfish.new(key, Blowfish.MODE_CBC, iv)
@@ -130,26 +135,29 @@ def encrypt(data,path=PATH):
 	# 	padding = pack('b'*plen, *padding)
 	# 	return iv + cipher.encrypt(data + padding)
 	# if scheme == "CAST":
+	return
 
-def decrypt(data,path=PATH):
-	f = open(path,"rb")
+def decrypt(path,key_path=PATH):
+	f = open(key_path,"rb")
 	enc_data = pickle.load(f)
-	print(enc_data)
+	# print(enc_data)
 	scheme = enc_data.scheme
-	key = enc_data.key
-	if scheme == "AES":
-		iv = data[:AES.block_size]
-		cipher = AES.new(key, AES.MODE_CFB, iv)
-		return cipher.decrypt(data[AES.block_size:])
-	elif scheme == "Salsa20":
-		msg_nonce = data[:8]
-		ciphertext = data[8:]
-		cipher = Salsa20.new(key=key, nonce=msg_nonce)
-		return cipher.decrypt(ciphertext)
-	else:
-		msg_nonce = data[:8]
-		ciphertext = data[8:]
-		cipher = ChaCha20.new(key=key, nonce=msg_nonce)
-		return cipher.decrypt(ciphertext)
+	key = enc_data.key.hex()
+	# if scheme == "AES":
+	# 	iv = data[:AES.block_size]
+	# 	cipher = AES.new(key, AES.MODE_CFB, iv)
+	# 	return cipher.decrypt(data[AES.block_size:])
+	# elif scheme == "Salsa20":
+	# 	msg_nonce = data[:8]
+	# 	ciphertext = data[8:]
+	# 	cipher = Salsa20.new(key=key, nonce=msg_nonce)
+	# 	return cipher.decrypt(ciphertext)
+	# else:
+	# 	msg_nonce = data[:8]
+	# 	ciphertext = data[8:]
+	# 	cipher = ChaCha20.new(key=key, nonce=msg_nonce)
+	# 	return cipher.decrypt(ciphertext)
 	f.close()
-
+	print(key)
+	bash_command = "bash ./encrypt_decrypt.sh de "+scheme+" "+key+" "+path+".enc "+path
+	subprocess.run(bash_command,shell=True,check=False)

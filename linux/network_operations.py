@@ -4,6 +4,7 @@ import requests
 import json
 import hashlib
 import en_de
+
 def decode(data):
     '''
     Returns bytestream from given string
@@ -86,22 +87,27 @@ def download_file(path, user, server,key_path,shared=False):
     if there are extraneous paths, we upload.
     Then diff files/check timestamps, have a THRESHOLD variable for diff tolerance
     '''
-    while True:
+    # while True:
     
-        api_url = server + "api/" + user + "/" + path  # Fix URL
-        client = requests.session()
-        data = client.get(api_url)
-        # print(data.json())
-        file = decode(data.json()[0]["data"])
-        file = en_de.decrypt(file,key_path)
-        # os.remove(key_path)
-        # print(get_md5_sum(encode(file[8:])),data.json()[0]["md5sum"])
-        if(get_md5_sum(encode(file))==data.json()[0]["md5sum"]):
-            print("File recieved okay")         #fix this
-            # print(shared)
-            return [file, data.json()[0]["timestamp"]]  # fix this
+    api_url = server + "api/" + user + "/" + path  # Fix URL
+    client = requests.session()
+    data = client.get(api_url)
+    # print(data.json())
+    file = decode(data.json()[0]["data"])
+    file = en_de.decrypt(file,key_path)
+    # os.remove(key_path)
+    # print(get_md5_sum(encode(file[8:])),data.json()[0]["md5sum"])
+    if(get_md5_sum(encode(file))==data.json()[0]["md5sum"]):
+        print("File recieved okay")         #fix this
+        # print(shared)
+        return [file, data.json()[0]["timestamp"]]  # fix this
+    else:
+        print("Error in recieving file",path, "\n Make sure you have the correct key.")
+        choice = input("Do you want to try again? (Enter y or n) : ")
+        if choice == "y":
+            download_file(path,user,server,key_path,shared)
         else:
-            print("Error in recieving file, trying again")
+            return decode("IAo=")
 
 def get_user_id(username, server):
     api_url = server + "userAPI/" + username + "/"
