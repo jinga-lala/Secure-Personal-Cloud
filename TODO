@@ -60,3 +60,9 @@ Web Client-
 A page to specify the decryption scheme and corresponding key(s)
 
 A page to view/download the content
+
+//Also prevent another user to download the api using get method, i.e. , provide authentication to the api.
+
+//BUG:
+Change pwd to ./ to prevent empty pwds
+	

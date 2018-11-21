@@ -24,8 +24,10 @@ from spcv1 import views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^login/$', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
+    #url(r'^login/$', views.login_user, name='login'),
     url(r'^logout/$', auth_views.LogoutView.as_view(), name='logout'),
     url(r'^files/$', views.FileTree, name='files'),
+    url(r'^spc/', views.home, name='home'),
     url(r'^spc/', include('spcv1.urls')),
     url(r'^signup$', views.signup, name='signup'),
     url(r'^api/$', views.FileList.as_view()),

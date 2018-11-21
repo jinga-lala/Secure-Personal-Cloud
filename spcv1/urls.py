@@ -5,6 +5,6 @@ app_name = 'spcv1'
 
 urlpatterns = [
 	url(r'^$', views.home, name='home'),
-	url(r'^home$', views.home, name='home'),
+	#url(r'^home$', views.home, name='home'),
 	url(r'^signup$', views.signup, name='signup'),
 ]

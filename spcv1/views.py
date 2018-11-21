@@ -14,7 +14,32 @@ from django.http import HttpResponse
 from django.contrib.auth import login, authenticate,logout
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+from django.shortcuts import render_to_response
+from django.template import RequestContext
+from django.views.decorators.cache import cache_control
+
+
+
 #import MySQLdb, cPickle
+
+# def login_user(request):
+#     logout(request)
+#     username = password = ''
+#     if request.POST:
+#         username = request.POST['username']
+#         password = request.POST['password']
+
+#         user = authenticate(username=username, password=password)
+#         if user is not None:
+#             if user.is_active:
+#                 login(request, user)
+#                 return HttpResponseRedirect('/spc')
+#     return render(request,'login_test.html')
+
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+@login_required(login_url='/login')
 def home(request):
     return render(request, 'home.html')
 
@@ -33,6 +58,7 @@ def signup(request):
         form = UserCreationForm()
     return render(request, 'signup.html', {'form': form})
 
+@login_required(login_url='/login')
 def FileTree(request):
     uid = request.POST.get('id')
     users = User.objects.filter(id = uid)
@@ -46,6 +72,7 @@ def FileTree(request):
 
 #List all users, with their file paths and time-stamp
 #user/filename
+#@login_required(login_url='/login')
 class FileList(APIView):
 
     def get(self, request):
@@ -63,6 +90,7 @@ class FileList(APIView):
 
 # Create your views here.
 
+#@login_required(login_url='/login')
 class FileListNotData(APIView):
 
     def get(self, request):
@@ -73,6 +101,7 @@ class FileListNotData(APIView):
     def post(self):
         pass
 
+#@login_required(login_url='/login')
 class FileListNotDataUser(APIView):
 
     def get(self,request,user_id):
@@ -84,6 +113,7 @@ class FileListNotDataUser(APIView):
     def  post(self):
         pass
 
+#@login_required(login_url='/login')
 class FileListUserData(APIView):
 
     def get(self,request,user_id,path):
@@ -102,6 +132,7 @@ class FileListUserData(APIView):
         files = File.objects.filter(user=user[0], path=new_path).update(data=request.data["data"], timestamp=request.data["timestamp"],md5sum=request.data["md5sum"])
         return Response(request.data, status=status.HTTP_201_CREATED)
 
+#@login_required(login_url='/login')
 class UserId(APIView):
 
     def get(self,request,user_id):
@@ -113,6 +144,7 @@ class UserId(APIView):
     def  post(self):
         pass
 
+#@login_required(login_url='/login')
 class getEnc(APIView):
 
     def get(self,request,user_id):
