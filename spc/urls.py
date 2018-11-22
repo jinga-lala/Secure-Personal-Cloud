@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.conf.urls import include
 from rest_framework.urlpatterns import format_suffix_patterns
 from django.contrib.auth import views as auth_views
-
+from rest_framework.authtoken import views as authviews
 from spcv1 import views
 
 urlpatterns = [
@@ -32,7 +32,8 @@ urlpatterns = [
     url(r'^pathAPI/(?P<user_id>[a-zA-Z0-9\-\_^/]+)/$', views.FileListNotDataUser.as_view(), name='results'),
     url(r'^api/(?P<user_id>[a-zA-Z0-9\-\_]+)/(?P<path>.+)$', views.FileListUserData.as_view(), name='file'),
     url(r'^userAPI/(?P<user_id>[a-zA-Z0-9\-\_^/]+)/$', views.UserId.as_view(), name='user'),
-    url(r'^encAPI/(?P<user_id>[a-zA-Z0-9\-\_^/]+)/$', views.getEnc.as_view(), name='enc')
+    url(r'^encAPI/(?P<user_id>[a-zA-Z0-9\-\_^/]+)/$', views.getEnc.as_view(), name='enc'),
+    url(r'^token-auth/',authviews.obtain_auth_token, name='api-token-auth'),
     ##TODO Error handling and security risks
 ]
 urlpatterns = format_suffix_patterns(urlpatterns)

@@ -7,5 +7,6 @@ urlpatterns = [
 	url(r'^$', views.home, name='home'),
 	url(r'^home$', views.home, name='home'),
 	url(r'^signup$', views.signup, name='signup'),
-    url(r'^files$', views.FileTree, name='files')
+    url(r'^files$', views.FileTree, name='files'),
+    url(r'^token$',views.getToken,name='token')
 ]

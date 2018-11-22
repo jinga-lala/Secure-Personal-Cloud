@@ -19,4 +19,10 @@ class encryption(models.Model):
     user = models.ForeignKey(User, default=1, on_delete=models.CASCADE)
     encrypted = models.CharField(max_length=1)
 
+class Token(models.Model):
+    user = models.CharField(max_length=1000000)
+    token = models.CharField(max_length=100000)
+    class Meta:
+        unique_together = (('user','token'),)
+
 # Create your models here.

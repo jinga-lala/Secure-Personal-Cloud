@@ -2,9 +2,9 @@ import os
 import network_operations
 import difflib
 # import en_de
-def get_paths_of_uploads_and_downloads(pwd, server, username,update=False):
-    paths_and_timestamps = network_operations.get_paths(server, username)
-    user = network_operations.get_user_id(username, server)
+def get_paths_of_uploads_and_downloads(pwd, server, username,token,update=False):
+    paths_and_timestamps = network_operations.get_paths(server, username,token)
+    user = network_operations.get_user_id(username, server,token)
     os.chdir(pwd)
     all_files = []
     for path, subdir, files in os.walk(pwd):
@@ -31,15 +31,16 @@ def get_paths_of_uploads_and_downloads(pwd, server, username,update=False):
             '''
             md5=network_operations.get_md5_sum(network_operations.encode(f.read()))
             # print(i["md5sum"],md5)
-            # print(md5,i["md5sum"])
+            # print(md5,i["md5stok = request.META['HEADERS']
+        # print(tok)um"])
             if(i["md5sum"] != md5):
                 conflicts.append(i["path"])
       
     return([download_paths, upload_paths, conflicts, user])
 
 
-def create_file(path, pwd, user, server):
-    data, timestamp = network_operations.download_file(path[2:], user, server)
+def create_file(path, pwd, user, server, token):
+    data, timestamp = network_operations.download_file(path[2:], user, server, token)
     path = pwd + path[1:]
     directory = "/".join(path.split("/")[:-1]) + "/"
     directory.replace("%20"," ")
@@ -55,27 +56,27 @@ def create_file(path, pwd, user, server):
     # os.utime(path, (timestamp, timestamp))
 
 
-def create_files(paths, pwd, user, server):
+def create_files(paths, pwd, user, server,token):
     '''
     Downloads files from given list of paths, creates directories and saves them
     Use on download_paths[]
     '''
     for path in paths:
         print("Downloading ", path)
-        create_file(path, pwd, user, server)
+        create_file(path, pwd, user, server,token)
 
 
-def upload_files(paths, pwd, user, server):
+def upload_files(paths, pwd, user, server,token):
     '''
     Uploads files on given paths
     '''
     for path in paths:
         print("Uploading ", path)
-        network_operations.upload_file(path, pwd, user, server)
+        network_operations.upload_file(path, pwd, user, server,token)
 
 
-def status(pwd, server, username):
-    to_be_downloaded, to_be_uploaded, conflicted, _ = get_paths_of_uploads_and_downloads(pwd, server, username)
+def status(pwd, server, username,token):
+    to_be_downloaded, to_be_uploaded, conflicted, _ = get_paths_of_uploads_and_downloads(pwd, server, username,token)
     f=0
     if(len(to_be_uploaded)):
         print("\n", "Files not on server : ", "\n")
@@ -95,7 +96,7 @@ def status(pwd, server, username):
     if(f == 0):
         print("Up to date, no syncing required")
 
-def resolve_conflicts(paths, pwd, username, user_id, server):
+def resolve_conflicts(paths, pwd, username, user_id, server,token):
     '''
     Call on conflicts array, downloads files, compares them, asks user, then maybe downloads
     '''
@@ -108,11 +109,11 @@ def resolve_conflicts(paths, pwd, username, user_id, server):
                 print(file, " differs on the cloud, resolve conflict manually.")
                 choice = input("Enter 'u' to upload file, 'd' to download : ")
                 if(choice == 'u'):
-                    network_operations.update_file(file[2:], pwd, username, server)
+                    network_operations.update_file(file[2:], pwd, username, server,token)
                 if(choice == 'd'):
                     create_file(file, pwd, username, server)
             else:
-                contents, _ = network_operations.download_file(file[2:], username, server)
+                contents, _ = network_operations.download_file(file[2:], username, server,token)
                 fileb = open("./buff_diff.txt", "wb")
                 fileb.write(contents)
                 fileb.close()
@@ -133,16 +134,16 @@ def resolve_conflicts(paths, pwd, username, user_id, server):
                     print(line)
                 choice = input("Enter 'u' to upload file, 'd' to download : ")
                 if(choice == 'u'):
-                    network_operations.update_file(file[2:], pwd, username, server)
+                    network_operations.update_file(file[2:], pwd, username, server, token)
                 if(choice == 'd'):
-                    create_file(file, pwd, username, server)
+                    create_file(file, pwd, username, server, token)
 
         else:
 
             '''
             Diff here
             '''
-            contents, _ = network_operations.download_file(file[2:], username, server)
+            contents, _ = network_operations.download_file(file[2:], username, server, token)
             fileb = open("./buff_diff.txt", "wb")
             fileb.write(contents)
             fileb.close()
@@ -163,9 +164,9 @@ def resolve_conflicts(paths, pwd, username, user_id, server):
                 print(line)
             choice = input("Enter 'u' to upload file, 'd' to download : ")
             if(choice == 'u'):
-                network_operations.update_file(file[2:], pwd, username, server)
+                network_operations.update_file(file[2:], pwd, username, server, token)
             if(choice == 'd'):
-                create_file(file, pwd, username, server)
+                create_file(file, pwd, username, server, token)
 
 def die_with_usage():
     print("Enter a couple of args please")

@@ -3,17 +3,19 @@ from  rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 from rest_framework import status
-from .models import File,encryption
+from .models import File,encryption,Token
 from .serializer import FileSerializer
 from .serializer import FileSerializerNotData
 from .serializer import UserSerializer
 from .serializer import EncryptionSerializer
 from django.shortcuts import render
-from .forms import UserForm
+from .forms import UserForm,TokenForm
 from django.http import HttpResponse
 from django.contrib.auth import login, authenticate,logout
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect
+# from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+# from rest_framework.permissions import IsAuthenticated
 #import MySQLdb, cPickle
 def home(request):
     return render(request, 'home.html')
@@ -52,6 +54,7 @@ class FileList(APIView):
         return Response(serializer.data)
 
     def post(self,request):
+        ##aTTENTION NEED TO BE SECURED
         j = request.data
         serializer = FileSerializer(data = j)
         if serializer.is_valid():
@@ -62,7 +65,8 @@ class FileList(APIView):
 # Create your views here.
 
 class FileListNotData(APIView):
-
+    # authentication_classes = (SessionAuthentication, BasicAuthentication)
+    # permission_classes = (IsAuthenticated,)
     def get(self, request):
         files = File.objects.all() #get all file objects
         serializer = FileSerializerNotData(files, many=True)
@@ -74,6 +78,12 @@ class FileListNotData(APIView):
 class FileListNotDataUser(APIView):
 
     def get(self,request,user_id):
+        tok = request.META['HTTP_AUTHORIZATION']
+        tok = tok[6:]
+        gettok = Token.objects.filter(user=user_id)
+        if(gettok[0].token) != tok:
+            return Response(serializer.data ,status=status.HTTP_400_BAD_REQUEST)
+
         user = User.objects.filter(username=user_id)
         files = File.objects.filter(user=user[0])
         serializer = FileSerializerNotData(files, many=True)
@@ -85,6 +95,12 @@ class FileListNotDataUser(APIView):
 class FileListUserData(APIView):
 
     def get(self,request,user_id,path):
+        tok = request.META['HTTP_AUTHORIZATION']
+        tok = tok[6:]
+        gettok = Token.objects.filter(user=user_id)
+        if(gettok[0].token) != tok:
+            return Response(serializer.data ,status=status.HTTP_400_BAD_REQUEST)
+
         new_path = "./"+path ## ASSUMPTION: ALL PATHS WILL BEGIN WITH "./"
         user = User.objects.filter(username=user_id)
         files = File.objects.filter(user=user[0], path=new_path)
@@ -95,6 +111,12 @@ class FileListUserData(APIView):
         '''
             to resove conflicts and update file data
         '''
+        tok = request.META['HTTP_AUTHORIZATION']
+        tok = tok[6:]
+        gettok = Token.objects.filter(user=user_id)
+        if(gettok[0].token) != tok:
+            return Response(serializer.data ,status=status.HTTP_400_BAD_REQUEST)
+
         new_path = "./"+path
         user = User.objects.filter(username=user_id)
         files = File.objects.filter(user=user[0], path=new_path).update(data=request.data["data"], timestamp=request.data["timestamp"],md5sum=request.data["md5sum"])
@@ -103,6 +125,12 @@ class FileListUserData(APIView):
 class UserId(APIView):
 
     def get(self,request,user_id):
+        tok = request.META['HTTP_AUTHORIZATION']
+        tok = tok[6:]
+        gettok = Token.objects.filter(user=user_id)
+        if(gettok[0].token) != tok:
+            return Response(serializer.data ,status=status.HTTP_400_BAD_REQUEST)
+
         user = User.objects.filter(username=user_id)
         # files = File.objects.filter(user=user[0])
         serializer = UserSerializer(user, many=True)
@@ -114,6 +142,12 @@ class UserId(APIView):
 class getEnc(APIView):
 
     def get(self,request,user_id):
+        tok = request.META['HTTP_AUTHORIZATION']
+        tok = tok[6:]
+        gettok = Token.objects.filter(user=user_id)
+        if(gettok[0].token) != tok:
+            return Response(serializer.data ,status=status.HTTP_400_BAD_REQUEST)
+
         user = User.objects.filter(username=user_id)
         # files = File.objects.filter(user=user[0])
         enc = encryption.objects.filter(user=user[0])
@@ -121,6 +155,12 @@ class getEnc(APIView):
         return Response(serializer.data)
 
     def  post(self,request,user_id):
+        tok = request.META['HTTP_AUTHORIZATION']
+        tok = tok[6:]
+        gettok = Token.objects.filter(user=user_id)
+        if(gettok[0].token) != tok:
+            return Response(serializer.data ,status=status.HTTP_400_BAD_REQUEST)
+
         user = User.objects.filter(username=user_id)
         # files = File.objects.filter(user=user[0])
         data={"user":user[0].id,"encrypted":"T"}
@@ -130,5 +170,21 @@ class getEnc(APIView):
             return Response(request.data, status=status.HTTP_201_CREATED)
         return Response(enc.errors, status=status.HTTP_400_BAD_REQUEST)
 
+def getToken(request):
+    if request.method == 'POST':
+        form = TokenForm(request.POST)
+        if form.is_valid():
+            form.save()
+            # username = form.cleaned_data.get('username')
+            print("OOHLALALAL")
+            entry = Token(user=form.cleaned_data.get('user'),token=form.cleaned_data.get('token'))
+            entry.save()
+            # raw_password = form.cleaned_data.get('password1')
+            # user = authenticate(username=username, password=raw_password)
+            # login(request, user)
+            return redirect('/spc')
+    else:
+        form = TokenForm()
+    return render(request, 'signup.html', {'form': form})
 
 

@@ -27,7 +27,7 @@ def get_md5_sum(file):
     return hashlib.md5(file.encode('utf-8')).hexdigest()
 
 
-def upload_file(path, pwd, user, server):
+def upload_file(path, pwd, user, server,token):
     '''
     Uploads file given a dict of user, path of file and server
     URL.
@@ -48,7 +48,7 @@ def upload_file(path, pwd, user, server):
         encoded_data = "IAo="  # Base64 for " " character
     payload = {'user': user, 'path': path, 'timestamp': os.path.getmtime(path), 'data': encoded_data,'md5sum':md5sum}
     post_data = json.dumps(payload)
-    headers = {'Content-type': 'application/json'}
+    headers = {'Content-type': 'application/json', "Authorization" : "Token "+ token}
     api_url = server + "api/"
     client = requests.session()
     p = client.post(api_url, data=post_data, headers=headers)
@@ -56,16 +56,18 @@ def upload_file(path, pwd, user, server):
     # TODO
 
 
-def get_paths(server, username):
+def get_paths(server, username,token):
     print("Getting Paths")
     api_url = server + "pathAPI/" + username  # fix this
     # print(api_url)
     client = requests.session()
-    paths_and_timestamps = client.get(api_url)
+
+    header = {"Authorization" : "Token "+ token}
+    paths_and_timestamps = client.get(api_url, headers=header)
     return(paths_and_timestamps.json())
 
 
-def download_file(path, user, server):
+def download_file(path, user, server,token):
     '''
     Get paths, check whether those paths exist, if they don't, we download,
     if there are extraneous paths, we upload.
@@ -74,8 +76,9 @@ def download_file(path, user, server):
     while True:
     
         api_url = server + "api/" + user + "/" + path  # Fix URL
+        header = {"Authorization" : "Token "+ token}
         client = requests.session()
-        data = client.get(api_url)
+        data = client.get(api_url, headers=header)
         # print(data.json())
         file = decode(data.json()[0]["data"])
         file = en_de.decrypt(file)
@@ -87,14 +90,15 @@ def download_file(path, user, server):
         else:
             print("Error in recieving file, trying again")
 
-def get_user_id(username, server):
+def get_user_id(username, server,token):
     api_url = server + "userAPI/" + username + "/"
     client = requests.session()
-    data = client.get(api_url)
+    header = {"Authorization" : "Token "+ token}
+    data = client.get(api_url, headers=header)
     return(data.json()[0]["id"])
 
 
-def update_file(path, pwd, username, server):
+def update_file(path, pwd, username, server,token):
     file = open((pwd +"/"+ path), "rb")
     data = file.read()
     file.close()
@@ -104,7 +108,7 @@ def update_file(path, pwd, username, server):
     encoded_data = encode(data)
     payload = {'path': path.replace(pwd, "."), 'timestamp': os.path.getmtime(path), 'data': encoded_data,'md5sum':md5sum}
     post_data = json.dumps(payload)
-    headers = {'Content-type': 'application/json'}
+    headers = {'Content-type': 'application/json', "Authorization" : "Token "+ token}
     api_url = server + "api/" + username + "/" + path
     client = requests.session()
     p = client.post(api_url, data=post_data, headers=headers)

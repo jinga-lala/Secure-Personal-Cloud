@@ -1,1 +1,1 @@
-{"SERVER": "http://127.0.0.1:8000/", "USER": "yashjain", "PWD": "/home/yash/Downloads/to_delete", "AUTHENTICATED": true}
+{"SERVER": "http://127.0.0.1:8000/", "USER": "yashjain", "PWD": "/home/yash/ende_tests", "AUTHENTICATED": true, "TOKEN": "6c191e697bfd53b9113f69646370c6dd33cd9efd"}
