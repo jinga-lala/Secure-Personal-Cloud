@@ -79,7 +79,7 @@ def download_file(path, user, server,token):
         header = {"Authorization" : "Token "+ token}
         client = requests.session()
         data = client.get(api_url, headers=header)
-        print(data.json(), api_url)
+        # print(data.json(), api_url)
         file = decode(data.json()[0]["data"])
         file = en_de.decrypt(file)
         # print(get_md5_sum(encode(file[8:])),data.json()[0]["md5sum"])

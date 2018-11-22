@@ -61,18 +61,26 @@ def create_files(paths, pwd, user, server,token):
     Downloads files from given list of paths, creates directories and saves them
     Use on download_paths[]
     '''
+    printProgressBar(0, len(paths), prefix = 'Progress:', suffix = 'Complete', length = 50)
+    i=0
     for path in paths:
         print("Downloading ", path)
         create_file(path, pwd, user, server,token)
+        printProgressBar(i + 1, len(paths), prefix = 'Progress:', suffix = 'Complete', length = 50)
+        i+=1
 
 
 def upload_files(paths, pwd, user, server,token,username):
     '''
     Uploads files on given paths
     '''
+    printProgressBar(0, len(paths), prefix = 'Progress:', suffix = 'Complete', length = 50)
+    i=0
     for path in paths:
         print("Uploading ", path)
         network_operations.upload_file(path, pwd, user, server,token,username)
+        printProgressBar(i + 1, len(paths), prefix = 'Progress:', suffix = 'Complete', length = 50)
+        i+=1
 
 
 def status(pwd, server, username,token):
@@ -102,7 +110,11 @@ def resolve_conflicts(paths, pwd, username, user_id, server,token):
     '''
     # TODO
     allowed = ["txt", "py", "cpp", "c", ]
+    printProgressBar(0, len(paths), prefix = 'Progress:', suffix = 'Complete', length = 50)
+    i=0
     for file in paths:
+        printProgressBar(i + 1, len(paths), prefix = 'Progress:', suffix = 'Complete', length = 50)
+        i +=1
         if(len(file[2:].split(".")) > 1):
             extension = file.split(".")[-1]
             if(extension not in allowed):
@@ -170,3 +182,26 @@ def resolve_conflicts(paths, pwd, username, user_id, server,token):
 
 def die_with_usage():
     print("Enter a couple of args please")
+
+def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█'):
+    """
+    Call in a loop to create terminal progress bar
+    @params:
+        iteration   - Required  : current iteration (Int)
+        total       - Required  : total iterations (Int)
+        prefix      - Optional  : prefix string (Str)
+        suffix      - Optional  : suffix string (Str)
+        decimals    - Optional  : positive number of decimals in percent complete (Int)
+        length      - Optional  : character length of bar (Int)
+        fill        - Optional  : bar fill character (Str)
+    """
+    if(total==0):
+        print()
+    else:
+        percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
+        filledLength = int(length * iteration // total)
+        bar = fill * filledLength + '-' * (length - filledLength)
+        print('\r%s |%s| %s%% %s' % (prefix, bar, percent, suffix), end = '\r')
+        # Print New Line on Complete
+        if iteration == total: 
+            print()
