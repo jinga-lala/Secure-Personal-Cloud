@@ -31,7 +31,7 @@ if __name__ == "__main__":
         j = json.load(l)
         user = j["USER"]
         print('You are already logged in as ' + user)
-        # utils.recieve_files(USER,PWD,SERVER)
+        utils.recieve_files(USER,PWD,SERVER)
         l.close()
     elif(len(sys.argv) == 1 and AUTHENTICATED == False):
         input_user = input("Enter Username : ")
@@ -83,7 +83,7 @@ if __name__ == "__main__":
         if(sys.argv[1] == "status"):
 
             if(SERVER != "" and USER != "" and PWD != ""):
-                # utils.recieve_files(USER,PWD,SERVER)
+                utils.recieve_files(USER,PWD,SERVER)
                 utils.status(PWD, SERVER, USER)
             # elif USER == "":
             #     print("Login first")

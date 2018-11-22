@@ -179,7 +179,7 @@ def send_file(user,reciever,path,pwd,server):
         network_operations.send_sharing_file(server,data)
         create_file(path, pwd, user, server)
         print("Generating a shared key for ",path)
-        temp_key_path = "/".join(KEY_PATH.split("/")[:-1]) + "/"+"'"+path+"'"+"temp_key.dat"
+        temp_key_path = "temp_key.dat"
         en_de.get_schema(path=temp_key_path)
         reciever_uploader = network_operations.get_user_id(reciever,server)
         network_operations.upload_file(path, pwd, reciever_uploader, server,temp_key_path,shared=True)
