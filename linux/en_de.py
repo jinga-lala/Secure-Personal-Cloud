@@ -110,6 +110,7 @@ def encrypt(path,key_path=PATH):
 	print(key)
 	f.close()
 	bash_command = "bash "+BASH+" en "+scheme+" "+key+" "+path+" "+path+".enc"
+	# print(bash_command)
 	subprocess.run(bash_command,shell=True,check=False)
 	# print(type(key))
 	# if(scheme == "AES"):

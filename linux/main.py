@@ -83,7 +83,7 @@ if __name__ == "__main__":
         if(sys.argv[1] == "status"):
 
             if(SERVER != "" and USER != "" and PWD != ""):
-                utils.recieve_files(USER,PWD,SERVER)
+                # utils.recieve_files(USER,PWD,SERVER)
                 utils.status(PWD, SERVER, USER)
             # elif USER == "":
             #     print("Login first")
