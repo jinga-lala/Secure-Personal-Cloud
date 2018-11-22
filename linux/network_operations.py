@@ -75,11 +75,11 @@ def download_file(path, user, server,token):
     '''
     while True:
     
-        api_url = server + "api/" + user + "/" + path  # Fix URL
+        api_url = server + "updateAPI/" + user + "/" + path  # Fix URL
         header = {"Authorization" : "Token "+ token}
         client = requests.session()
         data = client.get(api_url, headers=header)
-        # print(data.json())
+        print(data.json(), api_url)
         file = decode(data.json()[0]["data"])
         file = en_de.decrypt(file)
         # print(get_md5_sum(encode(file[8:])),data.json()[0]["md5sum"])
@@ -109,7 +109,7 @@ def update_file(path, pwd, username, server,token):
     payload = {'path': path.replace(pwd, "."), 'timestamp': os.path.getmtime(path), 'data': encoded_data,'md5sum':md5sum}
     post_data = json.dumps(payload)
     headers = {'Content-type': 'application/json', "Authorization" : "Token "+ token}
-    api_url = server + "api/" + username + "/" + path
+    api_url = server + "updateAPI/" + username + "/" + path
     client = requests.session()
     p = client.post(api_url, data=post_data, headers=headers)
     return p

@@ -114,9 +114,11 @@ class FileListUserData(APIView):
             return Response(serializer.errors ,status=status.HTTP_400_BAD_REQUEST)
 
         new_path = "./"+path ## ASSUMPTION: ALL PATHS WILL BEGIN WITH "./"
+        # print(new_path)
         user = User.objects.filter(username=user_id)
         files = File.objects.filter(user=user[0], path=new_path)
         serializer = FileSerializer(files, many=True )
+        # print(serializer)
         return Response(serializer.data)
 
     def post(self,request,user_id,path):
@@ -126,6 +128,7 @@ class FileListUserData(APIView):
         tok = request.META['HTTP_AUTHORIZATION']
         tok = tok[6:]
         gettok = Token.objects.filter(user=user_id)
+        # print("AAH OOPS")
         if(gettok[0].token) != tok:
             return Response(serializer.errors ,status=status.HTTP_400_BAD_REQUEST)
 
