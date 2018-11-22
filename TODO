@@ -71,3 +71,5 @@ File sharing game plan-
 		decrypt and save
 		encrypt and send
 		check for path conflicts
+
+en-de update - record timestamp of each update op, compare with local timestamp

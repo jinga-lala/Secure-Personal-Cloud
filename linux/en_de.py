@@ -18,12 +18,12 @@ class encryption_data:
 		return("Encryption Scheme : "+self.scheme+"\nKey : "+(net_ops.encode(self.key)))
 
 def list():
-	index = print("These are the available encryption schemes :\n\t1. AES \n\t2. Salsa20 \n\t3. ChaCha20\n")	
+	index = print("These are the available encryption schemes :\n\t1. AES \n\t2. DES-3 \n\t3. RC4\n")	
 def disp_schema():
 	f = open(PATH,"rb")
 	enc_data = pickle.load(f)
 	print(enc_data)
-def generate_schema(scheme="ChaCha20",key="",path=PATH):
+def generate_schema(scheme="AES",key="",path=PATH):
 	# print("Generating scheme - AES")
 	if(key == ""):
 		if scheme == "ChaCha20":
@@ -37,38 +37,38 @@ def generate_schema(scheme="ChaCha20",key="",path=PATH):
 		while(len(key)%4):
 			key+="y" # = is a specia character in base64 encoding hence a hardoded word is used
 
-		if scheme == "AES" or scheme == "Salsa20":
+		# if scheme == "AES" or scheme == "Salsa20":
 			'''
 			The code handles keys of all lengths
 			'''
-			print(len(key))
-			try:
-				if len(net_ops.decode(key))>=16:
-					key = net_ops.decode(key)[0:16]
-				else:
-					print("Key too short, enter a 24 character key.")
-					key = input("Enter a longer key : ")
-					generate_schema(scheme,key)
-					return
-			except ValueError as e:			#TODO
-				print("Your key is not compliant. Do not use spaces or special characters...")
-				key = input("Enter a key : ")
+		print(len(key))
+		try:
+			if len(net_ops.decode(key))>=16:
+				key = net_ops.decode(key)[0:16]
+			else:
+				print("Key too short, enter a 24 character key.")
+				key = input("Enter a longer key : ")
 				generate_schema(scheme,key)
 				return
-		elif scheme == "ChaCha20":
-			try:
-				if len(net_ops.decode(key)) >= 32:
-					key = net_ops.decode(key)[0:32]
-				else:
-					print("Key too short, enter a 48 character key.")
-					key = input("Enter a longer key : ")
-					generate_schema(scheme,key)
-					return
-			except ValueError as e:
-				print("Your key is not compliant. Do not use spaces or special characters...")
-				key = input("Enter a key : ")
-				generate_schema(scheme,key)
-				return
+		except ValueError as e:			#TODO
+			print("Your key is not compliant. Do not use spaces or special characters...")
+			key = input("Enter a key : ")
+			generate_schema(scheme,key)
+			return
+		# elif scheme == "ChaCha20":
+		# 	try:
+		# 		if len(net_ops.decode(key)) >= 32:
+		# 			key = net_ops.decode(key)[0:32]
+		# 		else:
+		# 			print("Key too short, enter a 48 character key.")
+		# 			key = input("Enter a longer key : ")
+		# 			generate_schema(scheme,key)
+		# 			return
+		# 	except ValueError as e:
+		# 		print("Your key is not compliant. Do not use spaces or special characters...")
+		# 		key = input("Enter a key : ")
+		# 		generate_schema(scheme,key)
+		# 		return
 	d = encryption_data(scheme,key)
 	f = open(path,"wb")
 	pickle.dump(d,f)
@@ -90,8 +90,8 @@ def get_schema(path=PATH):
 		input_path = input("Enter the full path of the file : \n")
 		load_scheme(input_path,path)
 	else:
-		schemes = ['AES','Salsa20','ChaCha20']
-		index = input("Enter the number corresponding to your encryption scheme :\n\t1. AES \n\t2. Salsa20 \n\t3. ChaCha20\n")
+		schemes = ['AES','DES-3','RC4']
+		index = input("Enter the number corresponding to your encryption scheme :\n\t1. AES \n\t2. DES-3 \n\t3. RC4\n")
 		scheme = schemes[int(index)-1]
 		choice = input("Do you have a key?\n")
 		if(choice == "y"):
