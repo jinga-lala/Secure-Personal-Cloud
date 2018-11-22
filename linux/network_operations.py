@@ -33,19 +33,24 @@ def upload_file(path, pwd, user, server,key_path,shared=False):
     Uploads file given a dict of user, path of file and server
     URL.
     '''
-    try:
-        file = open((pwd + path[1:]), "rb")
+    en_de.encrypt(pwd + path[1:],key_path)
+    # try:
+    file = open((pwd + path[1:]+".enc"), "r")
     # print(file)
-    except FileNotFoundError:
-        print(path," not found")
-        return
+    # except FileNotFoundError:
+    # print(path," not found")
+        # return
     # print(user)
     data = file.read()
     file.close()
-    encoded_data = encode(data)
+    file = open(pwd+path[1:],"rb")
+    check_sum_data = file.read()    
+    encoded_data = encode(check_sum_data)
     md5sum = get_md5_sum(encoded_data)
-    data,length = en_de.encrypt(data,key_path)
-    encoded_data = encode(data)
+    file.close()
+    os.remove((pwd + path[1:]+".enc"))
+    # data,length = en_de.encrypt(pwd + path[1:],key_path)
+    # encoded_data = encode(data)
 
     if encoded_data == "":      #TODO
         encoded_data = "IAo="  # Base64 for " " character
@@ -53,7 +58,7 @@ def upload_file(path, pwd, user, server,key_path,shared=False):
         safe = "Y"
     else:
         safe = "N"
-    payload = {'user': user, 'path': path, 'timestamp': os.path.getmtime(path), 'data': encoded_data,'md5sum':md5sum,'safe':safe}
+    payload = {'user': user, 'path': path, 'timestamp': os.path.getmtime(path), 'data': data,'md5sum':md5sum,'safe':safe}
     post_data = json.dumps(payload)
     headers = {'Content-type': 'application/json'}
     api_url = server + "api/"
@@ -81,7 +86,7 @@ def recieved_shared(user,path,server):
     p = client.post(api_url, data=post_data, headers=headers)
     return p
 
-def download_file(path, user, server,key_path,shared=False):
+def download_file(path,pwd,user, server,key_path,shared=False,buff=False):
     '''
     Get paths, check whether those paths exist, if they don't, we download,
     if there are extraneous paths, we upload.
@@ -89,25 +94,41 @@ def download_file(path, user, server,key_path,shared=False):
     '''
     # while True:
     
-    api_url = server + "api/" + user + "/" + path  # Fix URL
+    api_url = server + "api/" + user + "/" + path[2:]  # Fix URL
     client = requests.session()
     data = client.get(api_url)
+    print(api_url)
     # print(data.json())
-    file = decode(data.json()[0]["data"])
-    file = en_de.decrypt(file,key_path)
+    d = data.json()[0]["data"]
+    # buff_file = open(path+)
+    if buff == False:
+        file_path = pwd + path[1:]
+    else:
+        file_path = pwd + "/buff_diff.txt"
+    file = open(file_path+".enc" ,"w")
+    file.write(d)
+    file.close()
+    en_de.decrypt(file_path,key_path)
+    os.remove(file_path+".enc")
+    d = open(file_path,"rb")
+    file = d.read()
+    d.close()
+
     # os.remove(key_path)
     # print(get_md5_sum(encode(file[8:])),data.json()[0]["md5sum"])
     if(get_md5_sum(encode(file))==data.json()[0]["md5sum"]):
         print("File recieved okay")         #fix this
         # print(shared)
-        return [file, data.json()[0]["timestamp"]]  # fix this
+        return   # fix this
     else:
         print("Error in recieving file",path, "\n Make sure you have the correct key.")
         choice = input("Do you want to try again? (Enter y or n) : ")
         if choice == "y":
             download_file(path,user,server,key_path,shared)
         else:
-            return decode("IAo=")
+            file = open(file_path,"wb")
+            file.write(decode("IAo="))
+            file.close()
 
 def get_user_id(username, server):
     api_url = server + "userAPI/" + username + "/"
@@ -137,14 +158,32 @@ def check_for_files(reciever,server):
 
 
 def update_file(path, pwd, username, server):
-    file = open((pwd +"/"+ path), "rb")
+    en_de.encrypt(pwd + "/"+path)
+    # try:
+    file = open((pwd + "/"+path+".enc"), "r")
+    # print(file)
+    # except FileNotFoundError:
+    # print(path," not found")
+        # return
+    # print(user)
     data = file.read()
     file.close()
-    encoded_data = encode(data)
+    file = open(pwd+"/"+path,"rb")
+    check_sum_data = file.read()    
+    encoded_data = encode(check_sum_data)
     md5sum = get_md5_sum(encoded_data)
-    data,length = en_de.encrypt(data)
-    encoded_data = encode(data)
-    payload = {'path': path.replace(pwd, "."), 'timestamp': os.path.getmtime(path), 'data': encoded_data,'md5sum':md5sum,'safe':'Y'}
+    file.close()
+    os.remove((pwd +"/"+ path+".enc"))
+    # data,length = en_de.encrypt(pwd + path[1:],key_path)
+    # encoded_data = encode(data)
+
+    if encoded_data == "":      #TODO
+        encoded_data = "IAo="  # Base64 for " " character
+    # if shared == False:
+    #     safe = "Y"
+    # else:
+    #     safe = "N"
+    payload = {'path': path.replace(pwd, "."), 'timestamp': os.path.getmtime(path), 'data': data,'md5sum':md5sum,'safe':'Y'}
     post_data = json.dumps(payload)
     headers = {'Content-type': 'application/json'}
     api_url = server + "api/" + username + "/" + path

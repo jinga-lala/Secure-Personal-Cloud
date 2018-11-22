@@ -9,7 +9,7 @@ import os
 import subprocess
 DEFAULT_SCHEME = "AES"
 PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "crypto.dat")
-
+BASH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "encrypt_decrypt.sh")
 class encryption_data:
 	def __init__(self,scheme,key):
 		self.scheme = scheme
@@ -109,7 +109,7 @@ def encrypt(path,key_path=PATH):
 	key = enc_data.key.hex()
 	print(key)
 	f.close()
-	bash_command = "bash ./encrypt_decrypt.sh en "+scheme+" "+key+" "+path+" "+path+".enc"
+	bash_command = "bash "+BASH+" en "+scheme+" "+key+" "+path+" "+path+".enc"
 	subprocess.run(bash_command,shell=True,check=False)
 	# print(type(key))
 	# if(scheme == "AES"):
@@ -159,5 +159,5 @@ def decrypt(path,key_path=PATH):
 	# 	return cipher.decrypt(ciphertext)
 	f.close()
 	print(key)
-	bash_command = "bash ./encrypt_decrypt.sh de "+scheme+" "+key+" "+path+".enc "+path
+	bash_command = "bash "+BASH+" de "+scheme+" "+key+" "+path+".enc "+path
 	subprocess.run(bash_command,shell=True,check=False)

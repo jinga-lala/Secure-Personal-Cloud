@@ -40,18 +40,21 @@ def get_paths_of_uploads_and_downloads(pwd, server, username,update=False):
 
 
 def create_file(path, pwd, user, server,key_path=KEY_PATH,shared=False):
-    data, timestamp = network_operations.download_file(path[2:], user, server,key_path,shared)
-    path = pwd + path[1:]
+        # path = pwd + path[1:] + ".enc"
     directory = "/".join(path.split("/")[:-1]) + "/"
+    directory = pwd + directory[2:]
     # print(directory)
     try:
         os.makedirs(directory)
     except FileExistsError:
         a = 1
-    file = open(path, "wb")
-    file.write(data)
-    # print(timestamp)
-    file.close()
+    network_operations.download_file(path,pwd,user, server,key_path,shared)
+
+    # file = open(path, "w")
+    # file.write(data)
+    # # print(timestamp)
+    # file.close()
+    # # en_de.
     # os.utime(path, (timestamp, timestamp))
 
 
@@ -62,7 +65,7 @@ def create_files(paths, pwd, user, server,key_path=KEY_PATH,shared=False):
     '''
     for path in paths:
         print("Downloading ", path)
-        create_file(path, pwd, user, server,key_path,shared)
+        p = create_file(path, pwd, user, server,key_path,shared)
 
 
 def upload_files(paths, pwd, user, server):
@@ -112,7 +115,7 @@ def resolve_conflicts(paths, pwd, username, user_id, server):
                 if(choice == 'd'):
                     create_file(file, pwd, username, server)
             else:
-                contents, _ = network_operations.download_file(file[2:], username, server,KEY_PATH)
+                network_operations.download_file(file, username, server,KEY_PATH)
                 fileb = open("./buff_diff.txt", "wb")
                 fileb.write(contents)
                 fileb.close()
@@ -142,18 +145,18 @@ def resolve_conflicts(paths, pwd, username, user_id, server):
             '''
             Diff here
             '''
-            contents, _ = network_operations.download_file(file[2:], username, server,KEY_PATH)
-            fileb = open("./buff_diff.txt", "wb")
-            fileb.write(contents)
-            fileb.close()
-            f1 = open("./buff_diff.txt", "r")
+            network_operations.download_file(file, pwd,username, server,key_path=KEY_PATH,buff=True)
+            # fileb = open("./buff_diff.txt", "wb")
+            # fileb.write(contents)
+            # fileb.close()
+            f1 = open(pwd+"/buff_diff.txt", "r")
             f2 = open(file, "r")
-            diff1 = difflib.unified_diff(f1.readlines(), f2.readlines(), fromfile=file, tofile="./buff_diff.txt")
-            diff2 = difflib.unified_diff(f1.readlines(), f2.readlines(), fromfile=file, tofile="./buff_diff.txt")
+            diff1 = difflib.unified_diff(f1.readlines(), f2.readlines(), fromfile=file, tofile=pwd+"/buff_diff.txt")
+            diff2 = difflib.unified_diff(f1.readlines(), f2.readlines(), fromfile=file, tofile=pwd+"/buff_diff.txt")
             f2.close()
             f1.close()
 
-            os.remove("./buff_diff.txt")
+            os.remove(pwd+"/buff_diff.txt")
             # if(1.0 * len([_ for _ in diff1]) < (0.15) * len([_ for _ in f2.readlines()])):  # Threshold=15%
             #     print("Fast forwarding ", file)
             #     create_file(file, pwd, username, server)
