@@ -159,7 +159,8 @@ def check_for_files(reciever,server):
 
 
 def update_file(path, pwd, username, server):
-    en_de.encrypt(pwd + "/"+path)
+    # file_path = pwd + "/" + path
+    en_de.encrypt((pwd + path).replace(' ','\ '))
     # try:
     file = open((pwd + "/"+path+".enc"), "r")
     # print(file)

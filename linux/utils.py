@@ -116,10 +116,10 @@ def resolve_conflicts(paths, pwd, username, user_id, server):
                 if(choice == 'd'):
                     create_file(file, pwd, username, server)
             else:
-                network_operations.download_file(file, username, server,KEY_PATH)
-                fileb = open("./buff_diff.txt", "wb")
-                fileb.write(contents)
-                fileb.close()
+                network_operations.download_file(file, pwd,username, server,KEY_PATH,buff=True)
+                # fileb = open("./buff_diff.txt", "wb")
+                # fileb.write(contents)
+                # fileb.close()
                 f1 = open("./buff_diff.txt", "r")
                 f2 = open(file, "r")
                 diff1 = difflib.unified_diff(f1.readlines(), f2.readlines(), fromfile=file, tofile="./buff_diff.txt")
