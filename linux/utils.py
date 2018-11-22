@@ -66,13 +66,13 @@ def create_files(paths, pwd, user, server,token):
         create_file(path, pwd, user, server,token)
 
 
-def upload_files(paths, pwd, user, server,token):
+def upload_files(paths, pwd, user, server,token,username):
     '''
     Uploads files on given paths
     '''
     for path in paths:
         print("Uploading ", path)
-        network_operations.upload_file(path, pwd, user, server,token)
+        network_operations.upload_file(path, pwd, user, server,token,username)
 
 
 def status(pwd, server, username,token):

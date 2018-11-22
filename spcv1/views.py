@@ -48,13 +48,25 @@ def FileTree(request):
 #user/filename
 class FileList(APIView):
 
-    def get(self, request):
+    def get(self, request, user_id):
+        tok = request.META['HTTP_AUTHORIZATION']
+        tok = tok[6:]
+        gettok = Token.objects.filter(user=user_id)
+        if(gettok[0].token) != tok:
+            return Response(serializer.errors ,status=status.HTTP_400_BAD_REQUEST)
+
         files = File.objects.all() #get all file objects
         serializer = FileSerializer(files, many=True)
         return Response(serializer.data)
 
-    def post(self,request):
+    def post(self,request, user_id):
         ##aTTENTION NEED TO BE SECURED
+        tok = request.META['HTTP_AUTHORIZATION']
+        tok = tok[6:]
+        gettok = Token.objects.filter(user=user_id)
+        if(gettok[0].token) != tok:
+            return Response(serializer.errors ,status=status.HTTP_400_BAD_REQUEST)
+
         j = request.data
         serializer = FileSerializer(data = j)
         if serializer.is_valid():
@@ -64,16 +76,16 @@ class FileList(APIView):
 
 # Create your views here.
 
-class FileListNotData(APIView):
-    # authentication_classes = (SessionAuthentication, BasicAuthentication)
-    # permission_classes = (IsAuthenticated,)
-    def get(self, request):
-        files = File.objects.all() #get all file objects
-        serializer = FileSerializerNotData(files, many=True)
-        return Response(serializer.data)
+# class FileListNotData(APIView):
+#     # authentication_classes = (SessionAuthentication, BasicAuthentication)
+#     # permission_classes = (IsAuthenticated,)
+#     def get(self, request):
+#         files = File.objects.all() #get all file objects
+#         serializer = FileSerializerNotData(files, many=True)
+#         return Response(serializer.data)
 
-    def post(self):
-        pass
+#     def post(self):
+#         pass
 
 class FileListNotDataUser(APIView):
 
@@ -82,7 +94,7 @@ class FileListNotDataUser(APIView):
         tok = tok[6:]
         gettok = Token.objects.filter(user=user_id)
         if(gettok[0].token) != tok:
-            return Response(serializer.data ,status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors ,status=status.HTTP_400_BAD_REQUEST)
 
         user = User.objects.filter(username=user_id)
         files = File.objects.filter(user=user[0])
@@ -99,7 +111,7 @@ class FileListUserData(APIView):
         tok = tok[6:]
         gettok = Token.objects.filter(user=user_id)
         if(gettok[0].token) != tok:
-            return Response(serializer.data ,status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors ,status=status.HTTP_400_BAD_REQUEST)
 
         new_path = "./"+path ## ASSUMPTION: ALL PATHS WILL BEGIN WITH "./"
         user = User.objects.filter(username=user_id)
@@ -115,7 +127,7 @@ class FileListUserData(APIView):
         tok = tok[6:]
         gettok = Token.objects.filter(user=user_id)
         if(gettok[0].token) != tok:
-            return Response(serializer.data ,status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors ,status=status.HTTP_400_BAD_REQUEST)
 
         new_path = "./"+path
         user = User.objects.filter(username=user_id)
@@ -129,7 +141,7 @@ class UserId(APIView):
         tok = tok[6:]
         gettok = Token.objects.filter(user=user_id)
         if(gettok[0].token) != tok:
-            return Response(serializer.data ,status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors ,status=status.HTTP_400_BAD_REQUEST)
 
         user = User.objects.filter(username=user_id)
         # files = File.objects.filter(user=user[0])
@@ -146,7 +158,7 @@ class getEnc(APIView):
         tok = tok[6:]
         gettok = Token.objects.filter(user=user_id)
         if(gettok[0].token) != tok:
-            return Response(serializer.data ,status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors ,status=status.HTTP_400_BAD_REQUEST)
 
         user = User.objects.filter(username=user_id)
         # files = File.objects.filter(user=user[0])
@@ -159,7 +171,7 @@ class getEnc(APIView):
         tok = tok[6:]
         gettok = Token.objects.filter(user=user_id)
         if(gettok[0].token) != tok:
-            return Response(serializer.data ,status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors ,status=status.HTTP_400_BAD_REQUEST)
 
         user = User.objects.filter(username=user_id)
         # files = File.objects.filter(user=user[0])

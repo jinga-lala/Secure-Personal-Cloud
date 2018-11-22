@@ -100,7 +100,7 @@ if __name__ == "__main__":
                     choice = input("Press y to continue , n to quit : ")
                     if(choice == "y"):
                         utils.create_files(a, PWD, USER, SERVER,TOKEN)
-                        utils.upload_files(b, PWD, d, SERVER,TOKEN)
+                        utils.upload_files(b, PWD, d, SERVER,TOKEN, USER)
                         utils.resolve_conflicts(c, PWD, USER, d, SERVER,TOKEN)
                 # else:
                 #     print("Directory already upto date")

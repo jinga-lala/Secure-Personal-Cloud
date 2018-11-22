@@ -27,7 +27,7 @@ def get_md5_sum(file):
     return hashlib.md5(file.encode('utf-8')).hexdigest()
 
 
-def upload_file(path, pwd, user, server,token):
+def upload_file(path, pwd, user, server,token,username):
     '''
     Uploads file given a dict of user, path of file and server
     URL.
@@ -49,7 +49,7 @@ def upload_file(path, pwd, user, server,token):
     payload = {'user': user, 'path': path, 'timestamp': os.path.getmtime(path), 'data': encoded_data,'md5sum':md5sum}
     post_data = json.dumps(payload)
     headers = {'Content-type': 'application/json', "Authorization" : "Token "+ token}
-    api_url = server + "api/"
+    api_url = server + "api/" + username+"/"
     client = requests.session()
     p = client.post(api_url, data=post_data, headers=headers)
     return p
