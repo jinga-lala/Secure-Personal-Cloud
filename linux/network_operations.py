@@ -33,7 +33,7 @@ def upload_file(path, pwd, user, server,key_path,shared=False):
     Uploads file given a dict of user, path of file and server
     URL.
     '''
-    en_de.encrypt(pwd + path[1:],key_path)
+    en_de.encrypt((pwd + path[1:]).replace(' ','\ '),key_path)
     # try:
     file = open((pwd + path[1:]+".enc"), "r")
     # print(file)
@@ -108,9 +108,10 @@ def download_file(path,pwd,user, server,key_path,shared=False,buff=False):
     file = open(file_path+".enc" ,"w")
     file.write(d)
     file.close()
+    file_path = file_path.replace(' ','\ ')
     en_de.decrypt(file_path,key_path)
-    os.remove(file_path+".enc")
-    d = open(file_path,"rb")
+    os.remove(file_path.replace('\ ',' ')+".enc")
+    d = open(file_path.replace('\ ',' '),"rb")
     file = d.read()
     d.close()
 
@@ -126,7 +127,7 @@ def download_file(path,pwd,user, server,key_path,shared=False,buff=False):
         if choice == "y":
             download_file(path,user,server,key_path,shared)
         else:
-            file = open(file_path,"wb")
+            file = open(file_path.replace(' ','\ '),"wb")
             file.write(decode("IAo="))
             file.close()
 

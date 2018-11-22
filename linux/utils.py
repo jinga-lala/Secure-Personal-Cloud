@@ -42,7 +42,8 @@ def get_paths_of_uploads_and_downloads(pwd, server, username,update=False):
 def create_file(path, pwd, user, server,key_path=KEY_PATH,shared=False):
         # path = pwd + path[1:] + ".enc"
     directory = "/".join(path.split("/")[:-1]) + "/"
-    directory = pwd + directory[2:]
+    directory = pwd + directory[1:]
+    print(directory)
     # print(directory)
     try:
         os.makedirs(directory)
