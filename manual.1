@@ -1,0 +1,51 @@
+.TH spc 1 "23 November 2018" "version 1.0"
+.SH NAME
+spc - Secure Personal Cloud
+.SH SYNOPSIS
+.B spc 
+[OPTION] ...
+.SH DESCRIPTION
+Synchronizes all the FILEs (the current directory after
+.I "spc observe"
+) with the server while also encrypting them in one of
+.B AES, 
+.B TRIPLEDES
+or
+.B RC4
+encryption schema.
+.SH OPTIONS
+.IP "observe DIRECTORY PATH"	
+Sets the directory as the target directory for furthur syncs
+.IP sync
+Syncs all the FILEs with the server and also gives the option of changing the encryption scheme
+.IP status
+Displays the FILEs lists in three categories:
+.br 
+1. FILEs on the server (if any)
+.br
+2. FILEs not on the server (if any)
+.br
+3. Conflicted FILEs (if any)
+.IP version
+Displays the version of spc
+.IP server
+.br
+Displays IP and port number of the server 
+.IP help
+Brief display of all commands supported by spc
+.IP en-de
+
+.IP send_file
+
+.SH AUTHORS
+Yash Jain (yash.jain3599@gmail.com)
+.br
+Anshul Nasery (anshulnasery@gmail.com)
+.br
+Yash Khemchandani (yashkhem1@gmail.com)
+
+
+
+
+
+
