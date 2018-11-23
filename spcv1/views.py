@@ -318,14 +318,14 @@ class FileShareAPI(APIView):
             serializer = FileShareSerializerData(file, many=True)
             return Response(serializer.data)
 
-
+@login_required(login_url='/login')
 def getToken(request):
     if request.method == 'POST':
         form = TokenForm(request.POST)
         if form.is_valid():
             form.save()
             # username = form.cleaned_data.get('username')
-            print("OOHLALALAL")
+            # print("OOHLALALAL")
             entry = Token(user=form.cleaned_data.get('user'), token=form.cleaned_data.get('token'))
             entry.save()
             # raw_password = form.cleaned_data.get('password1')

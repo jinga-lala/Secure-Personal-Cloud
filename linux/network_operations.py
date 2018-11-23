@@ -71,6 +71,8 @@ def upload_file(path, pwd, user, server, token, username, key_path, shared=False
     p = client.post(api_url, data=post_data, headers=headers)
     if p.status_code == 400:
         print("File not uploaded correctly...")
+    else:
+        print("File uploaded correctly (MD5sum checked)")
     return p
     # TODO
 
