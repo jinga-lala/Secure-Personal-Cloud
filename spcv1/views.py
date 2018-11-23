@@ -8,10 +8,10 @@ from .serializer import FileSerializer
 from .serializer import FileSerializerNotData
 from .serializer import UserSerializer
 from .serializer import EncryptionSerializer
-from .serializer import FileShareSerializerNotData,FileShareSerializerData
+from .serializer import FileShareSerializerNotData, FileShareSerializerData
 from django.shortcuts import render
 from .forms import UserForm, TokenForm
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect
@@ -24,15 +24,18 @@ from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 import hashlib
+import json
 # from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 # from rest_framework.permissions import IsAuthenticated
 #import MySQLdb, cPickle
+
+
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @login_required(login_url='/login')
 def home(request):
     return render(request, 'home.html')
 
-
+@login_required(login_url='/login')
 def signup(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
@@ -123,10 +126,12 @@ class FileList(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         j = request.data
-        if hashlib.md5("whatever your string is".encode('utf-8')).hexdigest()!=j['md5_upload']:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        if hashlib.md5(j["data"].encode('utf-8')).hexdigest() != j['md5_upload']:
+            print("NO")
+            return Response("File not found", status=status.HTTP_400_BAD_REQUEST)
 
-        j = {x: j[x] for x in j if x!='md5_upload'}
+        print("File OK")
+        j = {x: j[x] for x in j if x != 'md5_upload'}
         serializer = FileSerializer(data=j)
         if serializer.is_valid():
             serializer.save()
@@ -242,7 +247,7 @@ class getEnc(APIView):
 
         user = User.objects.filter(username=user_id)
         # files = File.objects.filter(user=user[0])
-        data = {"user": user[0].id, "encrypted": "T","locked":request.data["locked"],"last_enc_update":request.data["last_enc_update"],"dead_time_check":request.data["dead_time_check"]}
+        data = {"user": user[0].id, "encrypted": "T", "locked": request.data["locked"], "last_enc_update": request.data["last_enc_update"], "dead_time_check": request.data["dead_time_check"]}
         enc = EncryptionSerializer(data=data)
         if enc.is_valid():
             enc.save()
@@ -300,15 +305,16 @@ class FileShareAPI(APIView):
             return Response(enc.errors, status=status.HTTP_400_BAD_REQUEST)
         elif mode == "done":
             j = request.data
-            file = shared_files.objects.filter(reciever=user_id, path=j["path"],sender=j["sender"]).delete()
+            file = shared_files.objects.filter(reciever=user_id, path=j["path"], sender=j["sender"]).delete()
             return Response(request.data, status=status.HTTP_201_CREATED)
             # return Response(enc.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
             j = request.data
-            file = shared_files.objects.filter(reciever=user_id, path=j["path"],sender=j["sender"])
+            file = shared_files.objects.filter(reciever=user_id, path=j["path"], sender=j["sender"])
             print(file[0])
             serializer = FileShareSerializerData(file, many=True)
             return Response(serializer.data)
+
 
 def getToken(request):
     if request.method == 'POST':
@@ -326,4 +332,3 @@ def getToken(request):
     else:
         form = TokenForm()
     return render(request, 'signup.html', {'form': form})
-
