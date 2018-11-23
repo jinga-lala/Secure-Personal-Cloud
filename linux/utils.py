@@ -72,7 +72,7 @@ def create_files(paths, pwd, user, server, token, key_path=KEY_PATH, shared=Fals
     for path in paths:
         print("Downloading ", path)
         status = create_file(path, pwd, user, server, token, key_path, shared)
-        if(!status):
+        if(status!=True):
             print("Did not download file")
         printProgressBar(i + 1, len(paths), prefix='Progress:', suffix='Complete', length=50)
         i += 1

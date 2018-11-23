@@ -15,3 +15,6 @@ pip3 install shutil
 pip3 install getpass
 pip3 install difflib
 echo "Run server, then run script"
+
+# Put in crontab 
+# 30 * * * * /home/anshuln/test.sh "$path"
