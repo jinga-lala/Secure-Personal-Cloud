@@ -2,7 +2,7 @@ import authenticate
 import network_operations
 import os
 import utils
-import argparse
+# import argparse
 import sys
 import json
 import getpass
@@ -96,12 +96,21 @@ if __name__ == "__main__":
             else:
                 print("Observe a folder first")
         if(sys.argv[1] == "observe"):
-            PWD = os.getcwd()
+            if len(sys.argv == 2):
+                PWD = os.getcwd()
+            else:
+                PWD = sys.argv[2]
             #PWD = "./"
             l = open(LOGFILE, "w")
             j["PWD"] = PWD
             json.dump(j, l)
             l.close()
+        if(sys.argv[1] == "server"):
+            print("Server URL :",SERVER.split(':')[1][2:] )
+            try:
+                print("Port number : ",SERVER.split(':')[2][:-1])
+            except:
+                print(" ")
         if(sys.argv[1] == "sync"):
             input_pwd = getpass.getpass("Enter your Password : ")
             ans,_=authenticate.login(USER, input_pwd, SERVER)

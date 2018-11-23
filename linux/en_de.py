@@ -2,7 +2,7 @@
 TODO - Bug where encryption scheme cannot be changed without observe
 '''
 import network_operations as net_ops
-from Crypto.Cipher import AES, Salsa20, ChaCha20
+# from Crypto.Cipher import AES, Salsa20, ChaCha20
 from Crypto import Random
 import pickle
 import os
@@ -18,7 +18,7 @@ class encryption_data:
         self.key = key
 
     def __str__(self):
-        return("Encryption Scheme : " + self.scheme + "\nKey : " + (net_ops.encode(self.key)))
+        return("Encryption Scheme : " + self.scheme + "\nKey : " + (net_ops.encode(self.key)) + "\nKey (hex): "+ (net_ops.encode(self.key)).hex())
 
 
 def list():
