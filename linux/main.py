@@ -112,6 +112,9 @@ if __name__ == "__main__":
             except:
                 print(" ")
         if(sys.argv[1] == "sync"):
+            if SERVER == "" or USER == "" or PWD == "":
+                print("Log in and observe a dir first")
+                exit(0)
             input_pwd = getpass.getpass("Enter your Password : ")
             ans,_=authenticate.login(USER, input_pwd, SERVER)
             # print(ans)
@@ -136,6 +139,10 @@ if __name__ == "__main__":
                     print("Access Denied")
         if(sys.argv[1] == "en-de"):
             if sys.argv[2] == "update":
+                if SERVER == "" or USER == "" or PWD == "":
+                    print("Log in and observe a dir first")
+                    exit(0)
+
                 input_pwd = getpass.getpass("Enter your Password : ")
                 ans,_=authenticate.login(USER, input_pwd, SERVER)
                 if(ans):

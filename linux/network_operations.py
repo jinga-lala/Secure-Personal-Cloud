@@ -137,16 +137,17 @@ def download_file(path, pwd, user, server, token, key_path, sender='',shared=Fal
     if(get_md5_sum(encode(file)) == data.json()[0]["md5sum"]):
         print("File recieved okay")  # fix this
         # print(shared)
-        return   # fix this
+        return True # fix this
     else:
         print("Error in recieving file", path, "\n Make sure you have the correct key.")
         choice = input("Do you want to try again? (Enter y or n) : ")
         if choice == "y":
             download_file(path,pwd, user, server,token, key_path, shared)
         else:
-            file = open(file_path.replace(' ', '\ '), "wb")
-            file.write(decode("IAo="))
-            file.close()
+            return False
+            # file = open(file_path.replace(' ', '\ '), "wb")
+            # file.write(decode("IAo="))
+            # file.close()
 
 
 def get_user_id(username, server, token):
