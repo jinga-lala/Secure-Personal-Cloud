@@ -12,6 +12,7 @@
              console.log(scheme);
         }
     </script>
+  <div class="container-fluid">
   <h4> You are logged in as {{ user.username }}</h4>
   <br>
   <strong> You shall not pass! (Unless you know the encryption schema ofcourse)</strong>
@@ -27,6 +28,7 @@
             <button type="submit" onclick="submitMe()" name="id" value="{{ user.id }}" style="background-color: #ccccc">Go</button>
   </form>
   <br>
+</div>
 
 {# else #}
     <!-- <meta http-equiv="REFRESH" content="0;url={% url 'login' %}"> -->
