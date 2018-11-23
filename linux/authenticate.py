@@ -2,7 +2,7 @@ import requests
 import main
 import en_de
 import json
-
+import time
 
 def login(username, password, server, first=False):
     '''
@@ -28,17 +28,7 @@ def login(username, password, server, first=False):
     # print(val)
     if(str(first_response.url) != url_login):  # Exploiting redirection
         main.USER = username
-        if(first):
-            client = requests.session()
-            APIurl = server + "encAPI/" + username + "/"
-            l = client.get(APIurl)
-            if(len(l.json())):
-                en_de.get_schema()
-            else:
-                en_de.generate_schema()
-                client = requests.session()
-                APIurl = server + "encAPI/" + username + "/"
-                l = client.post(APIurl)
+
         if (first):
             second_call = requests.post(server + "token-auth/", json=get_token)
             tok = second_call.json()
@@ -49,6 +39,21 @@ def login(username, password, server, first=False):
             csrftoken2 = client2.cookies['csrftoken']
             payload = {'user': username, 'token': TOKEN, 'csrfmiddlewaretoken': csrftoken2}
             client2.post(server + "spc/token", data=payload)
+            client = requests.session()
+            APIurl = server + "encAPI/" + username + "/"
+            headers = {"Authorization": "Token " + TOKEN,'Content-type': 'application/json'}
+            l = client.get(APIurl,headers=headers)
+
+            if(len(l.json())):
+                en_de.get_schema()
+            else:
+                en_de.generate_schema()
+            client = requests.session()
+            APIurl = server + "encAPI/" + username + "/"
+            j = {"locked":"N","last_enc_update":time.time(),"dead_time_check":time.time()}
+            post_data = json.dumps(j)
+            headers = {"Authorization": "Token " + TOKEN,'Content-type': 'application/json'}
+            l = client.post(APIurl,data=post_data,headers=headers)
         return True, TOKEN
     else:
         return False, TOKEN

@@ -4,7 +4,8 @@ import requests
 import json
 import hashlib
 import en_de
-
+import time
+KEY_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "crypto.dat")
 
 def decode(data):
     '''
@@ -201,3 +202,30 @@ def update_file(path, pwd, username, server, token):
     client = requests.session()
     p = client.post(api_url, data=post_data, headers=headers)
     return p
+
+def check_before_sync(username,server,token):
+    APIurl = server + "encAPI/" + username + "/"
+    headers = {"Authorization": "Token " + token}
+    client = requests.session()
+    l = client.get(APIurl,headers=headers)
+    data = l.json()[0]
+    # print(data)
+    if(data["locked"] == "Y"):
+        print("Database is locked for syncing, try again later")
+        return False
+    # else:
+    if(abs(data["last_enc_update"]-os.path.getmtime(KEY_PATH))>10):
+        choice = input("Are you sure you have the correct key and want to continue syncing? (Enter y/n) : ")
+        if(choice == "y"):
+            return True
+        else:
+            return False
+    return True
+
+def send_lock_signal(username,server,token,signal):
+    APIurl = server + "encAPI/" + username + "/"
+    headers = {"Authorization": "Token " + token,'Content-type':'application/json'}
+    data = {'user':"username",'encrypted':'Y','locked':signal,'last_enc_update':os.path.getmtime(KEY_PATH),"dead_time_check":time.time()}
+    post_data = json.dumps(data)
+    client = requests.session()
+    p = client.post(APIurl, data=post_data, headers=headers)

@@ -105,42 +105,51 @@ if __name__ == "__main__":
         if(sys.argv[1] == "sync"):
             input_pwd = getpass.getpass("Enter your Password : ")
             ans,_=authenticate.login(USER, input_pwd, SERVER)
+            # print(ans)
             if(ans):
-                print("Authenticated")
-                # utils.recieve_files(USER, PWD, SERVER)
-                a, b, c, d = utils.get_paths_of_uploads_and_downloads(pwd=PWD, server=SERVER, username=USER, token=TOKEN)
-                utils.status(PWD, SERVER, USER, TOKEN)
-                if(len(a) or len(b) or len(c)):
-                    choice = input("Press y to continue , n to quit : ")
-                    if(choice == "y"):
-                        utils.create_files(a, PWD, USER, SERVER, TOKEN)
-                        utils.upload_files(b, PWD, d, SERVER, TOKEN, USER)
-                        utils.resolve_conflicts(c, PWD, USER, d, SERVER, TOKEN)
-                # else:
-                #     print("Directory already upto date")
-            else:
-                print("Access Denied")
+                allowed = network_operations.check_before_sync(USER,SERVER,TOKEN)
+                if(allowed):
+                    network_operations.send_lock_signal(USER,SERVER,TOKEN,"Y")
+                    print("Authenticated")
+                    # utils.recieve_files(USER, PWD, SERVER)
+                    a, b, c, d = utils.get_paths_of_uploads_and_downloads(pwd=PWD, server=SERVER, username=USER, token=TOKEN)
+                    utils.status(PWD, SERVER, USER, TOKEN)
+                    if(len(a) or len(b) or len(c)):
+                        choice = input("Press y to continue , n to quit : ")
+                        if(choice == "y"):
+                            utils.create_files(a, PWD, USER, SERVER, TOKEN)
+                            utils.upload_files(b, PWD, d, SERVER, TOKEN, USER)
+                            utils.resolve_conflicts(c, PWD, USER, d, SERVER, TOKEN)
+                    network_operations.send_lock_signal(USER,SERVER,TOKEN,"N")
+                    # else:
+                    #     print("Directory already upto date")
+                else:
+                    print("Access Denied")
         if(sys.argv[1] == "en-de"):
             if sys.argv[2] == "update":
                 input_pwd = getpass.getpass("Enter your Password : ")
                 ans,_=authenticate.login(USER, input_pwd, SERVER)
                 if(ans):
-                    print("Authenticated")
-                    a, d = utils.get_paths_of_uploads_and_downloads(pwd=PWD, server=SERVER, username=USER, update=True, token=TOKEN)
-                    # print(a)
-                    pwd = os.path.join(os.path.dirname(os.path.abspath(__file__)), "temp")
-                    os.mkdir(pwd)
-                    utils.create_files(a, pwd, USER, SERVER, TOKEN)
-                    '''
-                    TODO - proper UX here
-                    '''
-                    # utils.resolve_conflicts(c, PWD, USER, d, SERVER)
-                    en_de.get_schema()
-                    for file in a:
-                        network_operations.update_file(file[2:], pwd, USER, SERVER, TOKEN)
-                    # utils.update_files(a, pwd, d, SERVER)
-                    rmtree(pwd)
-                    # utils.upload_files(c, PWD, d, SERVER)
+                    allowed = network_operations.check_before_sync(USER,SERVER,TOKEN)
+                    if(allowed):
+                        network_operations.send_lock_signal(USER,SERVER,TOKEN,"Y")
+                        print("Authenticated")
+                        a, d = utils.get_paths_of_uploads_and_downloads(pwd=PWD, server=SERVER, username=USER, update=True, token=TOKEN)
+                        # print(a)
+                        pwd = os.path.join(os.path.dirname(os.path.abspath(__file__)), "temp")
+                        os.mkdir(pwd)
+                        utils.create_files(a, pwd, USER, SERVER, TOKEN)
+                        '''
+                        TODO - proper UX here
+                        '''
+                        # utils.resolve_conflicts(c, PWD, USER, d, SERVER)
+                        en_de.get_schema()
+                        for file in a:
+                            network_operations.update_file(file[2:], pwd, USER, SERVER, TOKEN)
+                        # utils.update_files(a, pwd, d, SERVER)
+                        rmtree(pwd)
+                        network_operations.send_lock_signal(USER,SERVER,TOKEN,"N")
+                        # utils.upload_files(c, PWD, d, SERVER)
 
             elif sys.argv[2] == "dump":
                 choice = input("The details of the scheme will soon appear on the screen. Do you really want that?\n")

@@ -23,6 +23,12 @@ class File(models.Model):
 class encryption(models.Model):
     user = models.ForeignKey(User, default=1, on_delete=models.CASCADE)
     encrypted = models.CharField(max_length=1)
+    locked = models.CharField(max_length=1,default="N")
+    last_enc_update = models.FloatField(default=0.0)
+    dead_time_check = models.FloatField(default=0.0)
+    class Meta:
+        unique_together = (('user', 'encrypted'),)
+
 
 
 class shared_files(models.Model):
@@ -32,8 +38,8 @@ class shared_files(models.Model):
 
 
 class Token(models.Model):
-    user = models.CharField(max_length=1000000)
-    token = models.CharField(max_length=100000)
+    user = models.CharField(max_length=1000000,default="0")
+    token = models.CharField(max_length=100000,default="0")
 
     class Meta:
         unique_together = (('user', 'token'),)

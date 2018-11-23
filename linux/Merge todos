@@ -1,0 +1,8 @@
+chmod authenticate
+Check en_de api auth
+file shaing api
+upload file - tok,key_path,shared
+%20 in create file
+safe in file model
+freeze spc token
+Views.py line 101, share='Y'

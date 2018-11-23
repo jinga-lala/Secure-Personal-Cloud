@@ -26,7 +26,7 @@ class EncryptionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = encryption
-        fields = ('user', 'encrypted')
+        fields = "__all__"
 
 
 class FileSerializerNotData(serializers.ModelSerializer):

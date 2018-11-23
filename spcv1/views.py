@@ -168,6 +168,7 @@ class getEnc(APIView):
         tok = request.META['HTTP_AUTHORIZATION']
         tok = tok[6:]
         gettok = Token.objects.filter(user=user_id)
+        # print("fgmfkmsdm")
         if(gettok[0].token) != tok:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -182,16 +183,21 @@ class getEnc(APIView):
         tok = tok[6:]
         gettok = Token.objects.filter(user=user_id)
         if(gettok[0].token) != tok:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
         user = User.objects.filter(username=user_id)
         # files = File.objects.filter(user=user[0])
-        data = {"user": user[0].id, "encrypted": "T"}
+        data = {"user": user[0].id, "encrypted": "T","locked":request.data["locked"],"last_enc_update":request.data["last_enc_update"],"dead_time_check":request.data["dead_time_check"]}
         enc = EncryptionSerializer(data=data)
         if enc.is_valid():
             enc.save()
+            enc = encryption.objects.filter(user=user[0].id).update(**data)
+            # enc.save()
             return Response(request.data, status=status.HTTP_201_CREATED)
-        return Response(enc.errors, status=status.HTTP_400_BAD_REQUEST)
+        enc = encryption.objects.filter(user=user[0].id).update(**data)
+        # enc.save()
+
+        return Response(status=status.HTTP_201_CREATED)
 
 
 class FileShareAPI(APIView):
@@ -238,3 +244,4 @@ def getToken(request):
     else:
         form = TokenForm()
     return render(request, 'signup.html', {'form': form})
+
