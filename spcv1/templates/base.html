@@ -2,15 +2,32 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>{% block title %}Simple is Better Than Complex{% endblock %}</title>
+    <title>{% block title %}Secure Personal Cloud{% endblock %}</title>
   </head>
   <body>
+    <style>
+      .btn-link{
+            border:none;
+            outline:none;
+            background:none;
+            cursor:pointer;
+            color:#0000EE;
+            padding:0;
+            text-decoration:underline;
+            font-family:inherit;
+            font-size:inherit;
+          }
+    </style>
     <header>
-      <h1>My Site</h1>
+      <div style="align-content: center;">
+      <h1>Welcome to Secure Personal Cloud</h1>
+      <hr>
+      <p style="text-align: left"> <i> Your secrets are safe with me. Although I don't know any of them :p </i></p>
       {% if user.is_authenticated %}
-        <a href="{% url 'logout' %}">logout</a>
+        <a href="{% url 'logout' %}">Logout</a>/ <a href="{% url 'change_password' %}"> Change Password </a>
+
       {% else %}
-        <a href="{% url 'login' %}">login</a> / <a href="{% url 'signup' %}">signup</a>
+        <a href="{% url 'login' %}">Login</a> / <a href="{% url 'signup' %}">Signup</a>
       {% endif %}
       <hr>
     </header>
