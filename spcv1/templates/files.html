@@ -1,18 +1,18 @@
-<html>
-<head>
-    <title> Files on Server </title>
-    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <link rel="icon" href="./images.png" type="image/x-icon"></link>
+    <title>{% block title %}Secure Personal Cloud {% endblock %}</title>
+     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
-    <!-- Optional theme -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <!-- Latest compiled and minified JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <!-- <link rel="stylesheet" type="text/css" href="animate.css"> -->
+    <!-- <link rel="stylesheet" href="page.css"> -->
+    <!-- <link rel="stylesheet"  href="./animate.css"/> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
     <style>
 
     ul{
@@ -90,11 +90,10 @@
 
 </head>
 <body>
-
     <div class="container-fluid">
-    <h1> <i> Files present on the Server  </i> </h1>
-    <h4> (Click on the folders to view the files) </h4>
-    <div id="form" class="container-fluid" >
+    <h1 align="center" class="wow fadeInLeft animated" data-wow-offset="0" data-wow-delay="0.2s" style="visibility:visible; -webkit-animation-delay: 0.0s; -moz-animation-delay: 0.4s; animation-delay: 0.5s;background-color: #DAF7A6 ;padding: 20px" ><strong>Files on the server</strong></h1>
+    <h4 style="margin-left: 10px;"> (Click on the folders to view the files) </h4>
+    <div id="form">
         <form action="{% url 'render' %}" method="post">
             {% csrf_token %}
             <input type="hidden" name="id" id="inp1" />
@@ -105,6 +104,7 @@
         </form>
     </div>
 
+    <div class="container" style="margin-top:30px;">
 
      <script type="text/javascript">
 
@@ -215,8 +215,7 @@
     $("ul[class='tree1']").treed({openedClass:'glyphicon-folder-open', closedClass:'glyphicon-folder-close'});
     </script>
 
-
-
+</div>
 
     <script type="text/javascript">
 
@@ -259,8 +258,8 @@
             })});
 
     </script>
-
 </div>
+
 </body>
 </html>
 

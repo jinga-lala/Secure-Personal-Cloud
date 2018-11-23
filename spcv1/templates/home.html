@@ -13,22 +13,23 @@
         }
     </script>
   <div class="container-fluid">
-  <h4> You are logged in as {{ user.username }}</h4>
-  <br>
-  <strong> You shall not pass! (Unless you know the encryption schema ofcourse)</strong>
-  <br>
-  <br>
+  <h4 style="margin-left: 10px;"> You are logged in as {{ user.username }}</h4>
+  
+
+  <div  style="margin-left: 10px;"><strong> You shall not pass! (Unless you know the encryption schema of course)</strong></div><br> 
+   <div style="margin-left: 10px;">
   Enter Encryption Scheme: <br><br>
-  <input type="radio" name="scheme" value="AES" checked> AES <br>
-  <input type="radio" name="scheme" value="TripleDES"> Triple DES <br>
-  <input type="radio" name="scheme" value="RC4"> RC4  <br><br>
-  Enter Decryption Key:  <input type="text" width="36" id="key" > <br>
+  </div>
+  <input type="radio" name="scheme" value="AES" checked style="margin-left: 10px;"> AES <br>
+  <input type="radio" name="scheme" value="TripleDES" style="margin-left: 10px;"> Triple DES <br>
+  <input type="radio" name="scheme" value="RC4" style="margin-left: 10px;"> RC4  <br><br>
+  <div style="margin-left: 10px;">Enter Decryption Key: <input type="text" width="36" id="key" >  </div>
   <form action="{% url 'files' %}" method="post">
              {% csrf_token %}
-            <button type="submit" onclick="submitMe()" name="id" value="{{ user.id }}" style="background-color: #ccccc">Go</button>
+            <button style="margin-left: 10px;" type="submit" onclick="submitMe()" name="id" value="{{ user.id }}" style="background-color: #ccccc">Go</button>
   </form>
-  <br>
 </div>
+  <br>
 
 {# else #}
     <!-- <meta http-equiv="REFRESH" content="0;url={% url 'login' %}"> -->

@@ -7,7 +7,8 @@
 
   {% else %}
   <div class="container-fluid">
-  <h2>Log in to My Site</h2>
+  <h2 style="margin-left: 10px;">Log in to My Site</h2>
+  <!-- <img src="Secure-Business.jpg" align="right" alt="Photo"> -->
   {% if form.errors %}
     <p style="color: red">Your username and password didn't match. Please try again.</p>
   {% endif %}
@@ -15,7 +16,7 @@
     {% csrf_token %}
     <input type="hidden" name="next" value="{{ next }}" />
     {% for field in form %}
-      <p>
+      <p style="margin-left: 10px;">
         {{ field.label_tag }}<br>
         {{ field }}<br>
         {% for error in field.errors %}
@@ -26,13 +27,9 @@
         {% endif %}
       </p>
     {% endfor %}
-    <button type="submit">Log in</button>
-    <br>
-    <br>
-    <a href="{% url 'signup' %}">New to My Site? Sign up</a> <br>
-
+    <button type="submit" style="margin-left: 10px;">Log in</button>
+    <!-- <a href="{% url 'signup' %}" "style="font-size: 1.5em;margin-left: 5px;>New to My Site? Sign up</a> -->
   </form>
 </div>
-
   {% endif %}
 {% endblock %}

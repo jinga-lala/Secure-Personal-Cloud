@@ -1,20 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta charset="utf-8">
+    <link rel="icon" href="./images.png" type="image/x-icon"></link>
+    <title>{% block title %}Secure Personal Cloud {% endblock %}</title>
+     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
-    <!-- Optional theme -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <!-- Latest compiled and minified JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-    <title>{% block title %}Secure Personal Cloud{% endblock %}</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <!-- <link rel="stylesheet" type="text/css" href="animate.css"> -->
+    <!-- <link rel="stylesheet" href="page.css"> -->
+    <!-- <link rel="stylesheet"  href="./animate.css"/> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+    
   </head>
   <body>
-    <style>
+    <!-- <style>
       .btn-link{
             border:none;
             outline:none;
@@ -26,18 +28,22 @@
             font-family:inherit;
             font-size:inherit;
           }
-    </style>
+    </style> -->
     <header>
-      <div class="container-fluid">
-      <h1>Welcome to Secure Personal Cloud</h1>
+      <div class="container-fluid" style="align-content: center;">
+      <h1 align="center" class="wow fadeInLeft animated" data-wow-offset="0" data-wow-delay="0.2s" style="visibility:visible; -webkit-animation-delay: 0.0s; -moz-animation-delay: 0.4s; animation-delay: 0.5s;background-color: #DAF7A6 ;padding: 20px" ><strong>Welcome to Secure Personal Cloud</strong></h1>
       <hr>
-      <p style="text-align: left"> <i> Your secrets are safe with me. Although I don't know any of them :p </i></p>
+      <h3 style="text-align: left; margin-left: 10px;"> Your secrets are safe with me. Although I don't know any of them </h3>
       {% if user.is_authenticated %}
-        <a href="{% url 'logout' %}">Logout</a>/ <a href="{% url 'change_password' %}"> Change Password </a>
+        <a href="{% url 'logout' %}" class="wow zoomIn animated" data-wow-offset="0" data-wow-delay="0.4s" onMouseOver="this.style.backgroundColor=' #DAF7A6'" onMouseOut="this.style.backgroundColor='#ffffff' "style="font-size: 1.5em;margin-left: 5px;padding: 15px;border-radius: 10%;" >Logout</a>/ 
+        <a href="{% url 'change_password' %}" class="wow zoomIn animated" data-wow-offset="0" data-wow-delay="0.4s" onMouseOver="this.style.backgroundColor=' #DAF7A6'" onMouseOut="this.style.backgroundColor='#ffffff' "style="font-size: 1.5em;margin-left: 5px;padding: 15px;border-radius: 6%;"> Change Password </a>
 
       {% else %}
-        <a href="{% url 'login' %}">Login</a> / <a href="{% url 'signup' %}">Signup</a>
-      {% endif %}
+        <a href="{% url 'login' %}"class="wow zoomIn animated" data-wow-offset="0" data-wow-delay="0.4s" onMouseOver="this.style.backgroundColor=' #DAF7A6'" onMouseOut="this.style.backgroundColor='#ffffff' "style="font-size: 1.5em;margin-left: 5px;padding: 15px;border-radius: 10%;">Login</a> | 
+        <a href="{% url 'signup' %}" class="wow zoomIn animated" data-wow-offset="5" data-wow-delay="0.4s" onMouseOver="this.style.backgroundColor=' #DAF7A6'" onMouseOut="this.style.backgroundColor='#ffffff' "style="font-size: 1.5em;margin-left: 5px;padding: 15px;border-radius: 10%;">Signup</a>
+      {% endif %}<!-- 
+      onMouseOver="this.style.color='#0F0'"
+   onMouseOut="this.style.color='#00F'" -->
       <hr>
     </div>
     </header>
