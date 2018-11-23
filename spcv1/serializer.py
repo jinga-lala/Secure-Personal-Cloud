@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import  File,encryption
+from .models import  File,encryption,shared_files
 
 class UserSerializer(serializers.ModelSerializer):
 	class Meta:
@@ -11,7 +11,7 @@ class FileSerializer(serializers.ModelSerializer):
 	#user = UserSerializer()
 	class Meta:
 		model = File
-		fields = ('user', 'path', 'timestamp','data','md5sum')
+		fields = ('user', 'path', 'timestamp','data','md5sum','safe')
 		
 
 	# def create(self, request):
@@ -36,4 +36,9 @@ class FileSerializerNotData(serializers.ModelSerializer):
 		model = File
 		fields = ('user' , 'path', 'md5sum')
 		depth = 1
+
+class FileShareSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = shared_files
+		fields = "__all__"
 

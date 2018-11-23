@@ -26,11 +26,16 @@ if __name__ == "__main__":
     AUTHENTICATED = j["AUTHENTICATED"]
     TOKEN = j["TOKEN"]
     # print((AUTHENTICATED=="False"),len(sys.argv))
+    if(PWD==""):
+        PWD="./"
+
     if(len(sys.argv) == 1 and AUTHENTICATED == True):
         l = open(LOGFILE, "r")
         j = json.load(l)
         user = j["USER"]
         print('You are already logged in as ' + user)
+        utils.recieve_files(USER,PWD,SERVER)
+
         l.close()
     elif(len(sys.argv) == 1 and AUTHENTICATED == False):
         input_user = input("Enter Username : ")
@@ -54,6 +59,12 @@ if __name__ == "__main__":
             json.dump(j, l)
             l.close()
     elif(AUTHENTICATED == True):
+        if(sys.argv[1] == "check_for_files"):
+            utils.recieve_files(USER,PWD,SERVER)
+        if(sys.argv[1] == "send_file"):
+            reciever = input("Enter the reciever : ")
+            path = input("Enter the relative path of the file (provided it is backed up) : ")
+            utils.send_file(USER,reciever,path,PWD,SERVER)
         if(sys.argv[1] == "set-url"):
             if(len(sys.argv) < 3):
                 utils.die_with_usage()
@@ -79,6 +90,7 @@ if __name__ == "__main__":
         if(sys.argv[1] == "status"):
             if(SERVER != "" and USER != "" and PWD != ""):
                 utils.status(PWD, SERVER, USER,token=TOKEN)
+                utils.recieve_files(USER,PWD,SERVER)
             # elif USER == "":
             #     print("Login first")
             else:
@@ -94,6 +106,7 @@ if __name__ == "__main__":
             input_pwd = getpass.getpass("Enter your Password : ")
             if(authenticate.login(USER, input_pwd, SERVER)):
                 print("Authenticated")
+                utils.recieve_files(USER,PWD,SERVER)
                 a, b, c, d = utils.get_paths_of_uploads_and_downloads(pwd=PWD, server=SERVER, username=USER, token=TOKEN)
                 utils.status(PWD, SERVER, USER, TOKEN)
                 if(len(a) or len(b) or len(c)):

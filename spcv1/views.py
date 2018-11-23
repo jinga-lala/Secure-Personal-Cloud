@@ -3,11 +3,12 @@ from  rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 from rest_framework import status
-from .models import File,encryption,Token
+from .models import File,encryption,Token,shared_files
 from .serializer import FileSerializer
 from .serializer import FileSerializerNotData
 from .serializer import UserSerializer
 from .serializer import EncryptionSerializer
+from .serializer import FileShareSerializer
 from django.shortcuts import render
 from .forms import UserForm,TokenForm
 from django.http import HttpResponse
@@ -97,7 +98,7 @@ class FileListNotDataUser(APIView):
             return Response(serializer.errors ,status=status.HTTP_400_BAD_REQUEST)
 
         user = User.objects.filter(username=user_id)
-        files = File.objects.filter(user=user[0])
+        files = File.objects.filter(user=user[0],safe='Y')
         serializer = FileSerializerNotData(files, many=True)
         return Response(serializer.data)
 
@@ -134,7 +135,7 @@ class FileListUserData(APIView):
 
         new_path = "./"+path
         user = User.objects.filter(username=user_id)
-        files = File.objects.filter(user=user[0], path=new_path).update(data=request.data["data"], timestamp=request.data["timestamp"],md5sum=request.data["md5sum"])
+        files = File.objects.filter(user=user[0], path=new_path).update(data=request.data["data"], timestamp=request.data["timestamp"],md5sum=request.data["md5sum"],safe=request.data["safe"])
         return Response(request.data, status=status.HTTP_201_CREATED)
 
 class UserId(APIView):
@@ -184,6 +185,34 @@ class getEnc(APIView):
             enc.save()
             return Response(request.data, status=status.HTTP_201_CREATED)
         return Response(enc.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class FileShareAPI(APIView):       
+    def get(self,request,user_id,mode):
+        files = shared_files.objects.filter(reciever=user_id)
+        # files = File.objects.filter(user=user[0])
+        # enc = encryption.objects.filter(user=user[0])
+        serializer = FileShareSerializer(files, many=True)
+        return Response(serializer.data)    #TODO deletion
+
+    def  post(self,request,user_id,mode):
+        '''
+        Mode tells whether sending or recieving
+        '''
+        if(mode == "send"):
+            j=request.data
+            # files = File.objects.filter(user=user[0])
+            # data={"user":user[0].id,"encrypted":"T"}
+            enc = FileShareSerializer(data=j)
+            if enc.is_valid():
+                enc.save()
+                return Response(request.data, status=status.HTTP_201_CREATED)
+            return Response(enc.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            j = request.data
+            file = shared_files.objects.filter(reciever=user_id,path=j["path"]).delete()
+            return Response(request.data, status=status.HTTP_201_CREATED)
+            # return Response(enc.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 def getToken(request):
     if request.method == 'POST':

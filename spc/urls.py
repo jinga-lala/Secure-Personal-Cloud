@@ -34,6 +34,7 @@ urlpatterns = [
     url(r'^userAPI/(?P<user_id>[a-zA-Z0-9\-\_^/]+)/$', views.UserId.as_view(), name='user'),
     url(r'^encAPI/(?P<user_id>[a-zA-Z0-9\-\_^/]+)/$', views.getEnc.as_view(), name='enc'),
     url(r'^token-auth/',authviews.obtain_auth_token, name='api-token-auth'),
+    url(r'^shareAPI/(?P<user_id>[a-zA-Z0-9\-\_^/]+)/(?P<mode>.+)$', views.FileShareAPI.as_view(), name='share'),
     ##TODO Error handling and security risks
 ]
 urlpatterns = format_suffix_patterns(urlpatterns)
