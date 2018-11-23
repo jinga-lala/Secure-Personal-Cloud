@@ -27,7 +27,7 @@ if __name__ == "__main__":
     TOKEN = j["TOKEN"]
     # print((AUTHENTICATED=="False"),len(sys.argv))
     if(PWD == ""):
-        PWD = "./"
+        PWD = "."
 
     if(len(sys.argv) == 1 and AUTHENTICATED == True):
         l = open(LOGFILE, "r")
@@ -81,6 +81,8 @@ if __name__ == "__main__":
             reciever = input("Enter the reciever : ")
             path = input("Enter the relative path of the file (provided it is backed up) : ")
             utils.send_file(USER, reciever, path, PWD, SERVER,TOKEN)
+        if sys.argv[1] == "help":
+            utils.die_with_usage()
         if(sys.argv[1] == "set-url"):
             if(len(sys.argv) < 3):
                 utils.die_with_usage()

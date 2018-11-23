@@ -62,7 +62,8 @@ def upload_file(path, pwd, user, server, token, username, key_path, shared=False
     else:
         # safe = "N"
         return {'data': data, 'md5sum': md5sum}
-    payload = {'user': user, 'path': path, 'timestamp': os.path.getmtime(path), 'data': data, 'md5sum': md5sum, 'safe': safe}
+    md5_upload = get_md5_sum(data)
+    payload = {'user': user, 'path': path, 'timestamp': os.path.getmtime(path), 'data': data, 'md5sum': md5sum, 'safe': safe,'md5_upload':md5_upload}
     post_data = json.dumps(payload)
     headers = {'Content-type': 'application/json', "Authorization": "Token " + token}
     api_url = server + "api/" + username + "/"

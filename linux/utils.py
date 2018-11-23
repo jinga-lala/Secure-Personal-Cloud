@@ -250,7 +250,21 @@ def recieve_files(reciever, pwd, server, token,auto=False):
                         print("The key that",x,"gave you was probably incorrect... You may want to review your friendship.")
 
 def die_with_usage():
-    print("Enter a couple of args please")
+    print("Set of commands : ")
+    print("\t help : Displays help")
+    print("\t Version : Displays version of spc")
+    print("\t observe [directory(Optional)]: Sets current directory as synced dir. \n\t\t\t\t\tCan also take argument of directory to sync")
+    print("\t status : Displays status of file in observed directory")
+    print("\t check_for_files : Checks for files to be recieved")
+    print("\t set_url <url>: Sets url of server to <url>")
+    print("\t sync : Syncs the observed directory")
+    print("\t logout : Logs you out")
+    print("\t send_file : Sends file to another user")
+    print("\t en-de [OPTION] : ")
+    print("\t\t update : Updates encryption schema")
+    print("\t\t dump : Displays current encryption schema")
+    print("\t\t list : Displays available encryption schema")
+    # print("Enter a couple of args please")
 
 
 def printProgressBar(iteration, total, prefix='', suffix='', decimals=1, length=100, fill='█'):

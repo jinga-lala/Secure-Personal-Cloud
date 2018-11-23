@@ -23,7 +23,7 @@ from django.views.decorators.cache import cache_control
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
-
+import hashlib
 # from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 # from rest_framework.permissions import IsAuthenticated
 #import MySQLdb, cPickle
@@ -123,6 +123,10 @@ class FileList(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         j = request.data
+        if hashlib.md5("whatever your string is".encode('utf-8')).hexdigest()!=j['md5_upload']:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        j = {x: j[x] for x in j if x!='md5_upload'}
         serializer = FileSerializer(data=j)
         if serializer.is_valid():
             serializer.save()
