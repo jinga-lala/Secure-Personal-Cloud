@@ -35,6 +35,8 @@ class shared_files(models.Model):
     sender = models.CharField(max_length=100)  # TODO
     reciever = models.CharField(max_length=100)
     path = models.CharField(max_length=100)
+    data = models.CharField(max_length=100000000,default=" ")
+    md5sum = models.CharField(max_length=100,default=" ")
 
 
 class Token(models.Model):

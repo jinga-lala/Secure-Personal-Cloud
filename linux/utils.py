@@ -42,7 +42,7 @@ def get_paths_of_uploads_and_downloads(pwd, server, username, token, update=Fals
     return([download_paths, upload_paths, conflicts, user])
 
 
-def create_file(path, pwd, user, server, token, key_path=KEY_PATH, shared=False):
+def create_file(path, pwd, user, server, token, key_path=KEY_PATH,sender='', shared=False):
     # data, timestamp = network_operations.download_file(path[2:], user, server, token)
     # path = pwd + path[1:]
     directory = "/".join(path.split("/")[:-1]) + "/"
@@ -53,7 +53,7 @@ def create_file(path, pwd, user, server, token, key_path=KEY_PATH, shared=False)
         os.makedirs(directory)
     except FileExistsError:
         a = 1
-    network_operations.download_file(path, pwd, user, server, token, key_path, shared)
+    network_operations.download_file(path, pwd, user, server, token, key_path,sender, shared)
 
     # file = open(path, "wb")
     # file.write(data)
@@ -192,14 +192,16 @@ def send_file(user, reciever, path, pwd, server, token):
     '''
     '''
     if(network_operations.get_user_id(reciever, server, token) != -1):
-        data = {"sender": user, "reciever": reciever, "path": path}
-        network_operations.send_sharing_file(server, data)
+        
+        # network_operations.send_sharing_file(server, data)
         create_file(path, pwd, user, server, token)
         print("Generating a shared key for ", path)
-        temp_key_path = "temp_key.dat"
+        temp_key_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "temp_key.dat")
         en_de.get_schema(path=temp_key_path)
         reciever_uploader = network_operations.get_user_id(reciever, server, token)
-        network_operations.upload_file(path, pwd, reciever_uploader, server, token, temp_key_path, shared=True)
+        d = network_operations.upload_file(path, pwd, reciever_uploader, server, token,reciever, temp_key_path, shared=True)
+        data = {"sender": user, "reciever": reciever, "path": path,'md5sum':d["md5sum"],'data':d["data"]}
+        network_operations.send_sharing_file(server,data,token)
         print("The key for the file can be found in your home folder under the name 'temp_key.dat', if you wish to share it")
 
     else:
@@ -207,7 +209,7 @@ def send_file(user, reciever, path, pwd, server, token):
 
 
 def recieve_files(reciever, pwd, server, token):
-    files = network_operations.check_for_files(reciever, server)
+    files = network_operations.check_for_files(reciever, server,token)
     if(len(files)):
         shared_with_me = {}
         for x in files:
@@ -223,14 +225,16 @@ def recieve_files(reciever, pwd, server, token):
                 en_de.get_schema(path=key_path)
                 for file in shared_with_me[x]:
                     print("Downloading ", file)
-                    create_file(file, pwd, reciever, server, token, key_path, True)
-                    network_operations.recieved_shared(reciever, file, server)
+                    create_file(file, pwd, reciever, server, token, key_path, sender=x,shared=True)
+                    
+                    network_operations.recieved_shared(reciever,x, file, server,token)
                     print("Backing file up...")
                     # reciever_uploader = network_operations.get_user_id(reciever,server)
                     # if (file in [x["path"] for x in get_paths(server,data["sender"])]):
                     # print("There is a conflict in ",file,". \nResolve and resync with the server")
                     # else:
-                    network_operations.update_file(file[2:], pwd, reciever, server, token)
+                    rec_id = network_operations.get_user_id(reciever,server,token)
+                    network_operations.upload_file(file, pwd,rec_id, server, token,reciever,KEY_PATH)
 
 
 def die_with_usage():

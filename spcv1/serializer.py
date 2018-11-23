@@ -37,7 +37,12 @@ class FileSerializerNotData(serializers.ModelSerializer):
         depth = 1
 
 
-class FileShareSerializer(serializers.ModelSerializer):
+class FileShareSerializerNotData(serializers.ModelSerializer):
+    class Meta:
+        model = shared_files
+        fields = ('sender','reciever', 'path')
+
+class FileShareSerializerData(serializers.ModelSerializer):
     class Meta:
         model = shared_files
         fields = "__all__"

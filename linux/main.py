@@ -34,7 +34,7 @@ if __name__ == "__main__":
         j = json.load(l)
         user = j["USER"]
         print('You are already logged in as ' + user)
-        # utils.recieve_files(USER, PWD, SERVER)
+        utils.recieve_files(USER, PWD, SERVER,TOKEN)
 
         l.close()
     elif(len(sys.argv) == 1 and AUTHENTICATED == False):
@@ -64,7 +64,7 @@ if __name__ == "__main__":
         if(sys.argv[1] == "send_file"):
             reciever = input("Enter the reciever : ")
             path = input("Enter the relative path of the file (provided it is backed up) : ")
-            # utils.send_file(USER, reciever, path, PWD, SERVER)
+            utils.send_file(USER, reciever, path, PWD, SERVER,TOKEN)
         if(sys.argv[1] == "set-url"):
             if(len(sys.argv) < 3):
                 utils.die_with_usage()
@@ -90,7 +90,7 @@ if __name__ == "__main__":
         if(sys.argv[1] == "status"):
             if(SERVER != "" and USER != "" and PWD != ""):
                 utils.status(PWD, SERVER, USER, token=TOKEN)
-                # utils.recieve_files(USER, PWD, SERVER)
+                utils.recieve_files(USER, PWD, SERVER,TOKEN)
             # elif USER == "":
             #     print("Login first")
             else:
@@ -111,7 +111,7 @@ if __name__ == "__main__":
                 if(allowed):
                     network_operations.send_lock_signal(USER,SERVER,TOKEN,"Y")
                     print("Authenticated")
-                    # utils.recieve_files(USER, PWD, SERVER)
+                    utils.recieve_files(USER, PWD, SERVER,TOKEN)
                     a, b, c, d = utils.get_paths_of_uploads_and_downloads(pwd=PWD, server=SERVER, username=USER, token=TOKEN)
                     utils.status(PWD, SERVER, USER, TOKEN)
                     if(len(a) or len(b) or len(c)):

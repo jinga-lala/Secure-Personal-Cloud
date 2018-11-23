@@ -8,7 +8,7 @@ from .serializer import FileSerializer
 from .serializer import FileSerializerNotData
 from .serializer import UserSerializer
 from .serializer import EncryptionSerializer
-from .serializer import FileShareSerializer
+from .serializer import FileShareSerializerNotData,FileShareSerializerData
 from django.shortcuts import render
 from .forms import UserForm, TokenForm
 from django.http import HttpResponse
@@ -147,11 +147,11 @@ class FileListUserData(APIView):
 class UserId(APIView):
 
     def get(self, request, user_id):
-        tok = request.META['HTTP_AUTHORIZATION']
-        tok = tok[6:]
-        gettok = Token.objects.filter(user=user_id)
-        if(gettok[0].token) != tok:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        # tok = request.META['HTTP_AUTHORIZATION']
+        # tok = tok[6:]
+        # gettok = Token.objects.filter(user=user_id)
+        # if(gettok[0].token) != tok:
+        #     return Response(status=status.HTTP_400_BAD_REQUEST)
 
         user = User.objects.filter(username=user_id)
         # files = File.objects.filter(user=user[0])
@@ -202,31 +202,58 @@ class getEnc(APIView):
 
 class FileShareAPI(APIView):
     def get(self, request, user_id, mode):
-        files = shared_files.objects.filter(reciever=user_id)
-        # files = File.objects.filter(user=user[0])
-        # enc = encryption.objects.filter(user=user[0])
-        serializer = FileShareSerializer(files, many=True)
-        return Response(serializer.data)  # TODO deletion
+        tok = request.META['HTTP_AUTHORIZATION']
+        tok = tok[6:]
+        gettok = Token.objects.filter(user=user_id)
+        # print("fgmfkmsdm")
+        if(gettok[0].token) != tok:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        if mode == "path":
+
+            files = shared_files.objects.filter(reciever=user_id)
+            # files = File.objects.filter(user=user[0])
+            # enc = encryption.objects.filter(user=user[0])
+            serializer = FileShareSerializerNotData(files, many=True)
+            return Response(serializer.data)  # TODO deletion
+        else:
+            files = shared_files.objects.filter(reciever=user_id)
+            # files = File.objects.filter(user=user[0])
+            # enc = encryption.objects.filter(user=user[0])
+            serializer = FileShareSerializerData(files, many=True)
+            return Response(serializer.data)  # TODO deletion
 
     def post(self, request, user_id, mode):
         '''
         Mode tells whether sending or recieving
         '''
+        tok = request.META['HTTP_AUTHORIZATION']
+        tok = tok[6:]
+        gettok = Token.objects.filter(user=user_id)
+        # print("fgmfkmsdm")
+        if(gettok[0].token) != tok:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
         if(mode == "send"):
             j = request.data
             # files = File.objects.filter(user=user[0])
             # data={"user":user[0].id,"encrypted":"T"}
-            enc = FileShareSerializer(data=j)
+            enc = FileShareSerializerData(data=j)
             if enc.is_valid():
                 enc.save()
                 return Response(request.data, status=status.HTTP_201_CREATED)
             return Response(enc.errors, status=status.HTTP_400_BAD_REQUEST)
-        else:
+        elif mode == "done":
             j = request.data
-            file = shared_files.objects.filter(reciever=user_id, path=j["path"]).delete()
+            file = shared_files.objects.filter(reciever=user_id, path=j["path"],sender=j["sender"]).delete()
             return Response(request.data, status=status.HTTP_201_CREATED)
             # return Response(enc.errors, status=status.HTTP_400_BAD_REQUEST)
-
+        else:
+            j = request.data
+            file = shared_files.objects.filter(reciever=user_id, path=j["path"],sender=j["sender"])
+            print(file[0])
+            serializer = FileShareSerializerData(file, many=True)
+            return Response(serializer.data)
 
 def getToken(request):
     if request.method == 'POST':

@@ -60,7 +60,8 @@ def upload_file(path, pwd, user, server, token, username, key_path, shared=False
     if shared == False:
         safe = "Y"
     else:
-        safe = "N"
+        # safe = "N"
+        return {'data': data, 'md5sum': md5sum}
     payload = {'user': user, 'path': path, 'timestamp': os.path.getmtime(path), 'data': data, 'md5sum': md5sum, 'safe': safe}
     post_data = json.dumps(payload)
     headers = {'Content-type': 'application/json', "Authorization": "Token " + token}
@@ -82,29 +83,38 @@ def get_paths(server, username, token):
     return(paths_and_timestamps.json())
 
 
-def recieved_shared(user, path, server):
-    data = {"path": path}
-    api_url = server + "shareAPI/" + user + "/recieve"
+def recieved_shared(user,sender, path, server,token):
+    data = {"path": path,"sender":sender}
+    api_url = server + "shareAPI/" + user + "/done"
     client = requests.session()
     post_data = json.dumps(data)
     # print(api_url,post_data)
-    headers = {'Content-type': 'application/json'}
+    headers = {'Content-type': 'application/json',"Authorization": "Token " + token}
     p = client.post(api_url, data=post_data, headers=headers)
     return p
 
 
-def download_file(path, pwd, user, server, token, key_path, shared=False, buff=False):
+def download_file(path, pwd, user, server, token, key_path, sender='',shared=False, buff=False):
     '''
     Get paths, check whether those paths exist, if they don't, we download,
     if there are extraneous paths, we upload.
     Then diff files/check timestamps, have a THRESHOLD variable for diff tolerance
     '''
     # while True:
+    if shared == False:
+        api_url = server + "updateAPI/" + user + "/" + path[2:]  # Fix URL
+        header = {"Authorization": "Token " + token}
+        client = requests.session()
+        data = client.get(api_url, headers=header)
+    else:
+        api_url = server + "shareAPI/" + user + "/" + "recieve/"
+        header = {"Authorization": "Token " + token,'Content-type':'application/json'}
+        client = requests.session()
+        req = {"path":path,"sender":sender}
+        print(req)
+        post_data = json.dumps(req)
+        data = client.post(api_url, headers=header,data=post_data)
 
-    api_url = server + "updateAPI/" + user + "/" + path[2:]  # Fix URL
-    header = {"Authorization": "Token " + token}
-    client = requests.session()
-    data = client.get(api_url, headers=header)
     # print(data.json(), api_url, header)
     d = data.json()[0]["data"]
     # buff_file = open(path+)
@@ -150,23 +160,26 @@ def get_user_id(username, server, token):
         return -1
 
 
-def send_sharing_file(server, data):
+def send_sharing_file(server, data,token):
     api_url = server + "shareAPI/" + data["sender"] + "/send"
-    if(data["path"] in [x["path"] for x in get_paths(server, data["sender"])]):
+    # header = {}
+    if(data["path"] in [x["path"] for x in get_paths(server, data["sender"],token)]):
         client = requests.session()
         post_data = json.dumps(data)
-        headers = {'Content-type': 'application/json'}
+        headers = {'Content-type': 'application/json',"Authorization": "Token " + token}
         p = client.post(api_url, data=post_data, headers=headers)
         return p
     else:
         print("File doesn't exist on the server...")
 
 
-def check_for_files(reciever, server):
-    api_url = server + "shareAPI/" + reciever + "/recieved"
+def check_for_files(reciever, server,token):
+    api_url = server + "shareAPI/" + reciever + "/path"
     client = requests.session()
-    data = client.get(api_url)
+    header = {"Authorization": "Token " + token}
+    data = client.get(api_url,headers=header)
     return(data.json())
+# def download_shared(sender,reciever,path,pwd,server,token):
 
 
 def update_file(path, pwd, username, server, token):
