@@ -15,11 +15,20 @@ from django.http import HttpResponse
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+from django.shortcuts import render_to_response
+from django.template import RequestContext
+from django.views.decorators.cache import cache_control
+from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
+
 # from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 # from rest_framework.permissions import IsAuthenticated
 #import MySQLdb, cPickle
-
-
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+@login_required(login_url='/login')
 def home(request):
     return render(request, 'home.html')
 
@@ -39,13 +48,55 @@ def signup(request):
     return render(request, 'signup.html', {'form': form})
 
 
+@cache_control(no_cache=False, must_revalidate=True, no_store=True)
+@login_required(login_url='/login')
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Important!
+            messages.success(request, 'Your password was successfully updated!')
+            return redirect('/reset_success')
+        else:
+            messages.error(request, 'Please correct the error below.')
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request, 'change_password.html', {
+        'form': form
+    })
+
+
+@login_required(login_url='/login')
+def ResetSuccess(request):
+    return render(request, 'reset_success.html')
+
+
+@login_required(login_url='/login')
 def FileTree(request):
-    files = File.objects.all()
+    uid = request.POST.get('id')
+    users = User.objects.filter(id=uid)
+    files = File.objects.filter(user=users[0])
     paths = []
     for file in files:
         filepath = file.path[2:]
         paths.append(filepath)
-    return render(request, 'files.html', {'paths': paths})
+    return render(request, 'files.html', {'paths': paths, 'id': uid})
+
+
+@login_required(login_url='/login')
+def RenderFile(request):
+    uid = request.POST.get('id')
+    path = request.POST.get('path')
+    #key = request.POST.get('key')
+    #scheme = request.POST.get('scheme')
+    # print(scheme);
+    users = User.objects.filter(id=uid)
+    files = File.objects.filter(user=users[0], path=path)
+    data = files[0].data
+   # print(data)
+    exten = path.split(".")[-1]
+    return render(request, 'render.html', {'data': data, 'ext': exten})
 
 
 # List all users, with their file paths and time-stamp

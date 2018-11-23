@@ -1,6 +1,12 @@
 {% extends 'base.html' %}
 
 {% block content %}
+  {% if user.is_authenticated %}
+
+    <meta http-equiv="REFRESH" content="0;url={% url 'home' %}">
+
+  {% else %}
+
   <h2>Log in to My Site</h2>
   {% if form.errors %}
     <p style="color: red">Your username and password didn't match. Please try again.</p>
@@ -23,4 +29,6 @@
     <button type="submit">Log in</button>
     <a href="{% url 'signup' %}">New to My Site? Sign up</a>
   </form>
+
+  {% endif %}
 {% endblock %}

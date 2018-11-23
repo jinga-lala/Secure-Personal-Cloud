@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title> Render AES files </title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9/crypto-js.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9/aes.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9/tripledes.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9/rc4.js"></script>
+
+    <!-- <script>
+        var encryption=localStorage.getItem("scheme");
+        if(encryption == 'AES') localStorage.setItem("cdn","https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9/aes.js");
+        else if(encryption == 'TripleDES') localStorage.setItem("cdn","https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9/tripledes.js");
+        else  localStorage.setItem("cdn","https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9/rc4.js");
+    </script> -->
+
+    <!-- <script src= localStorage.getItem("cdn")></script> -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9/rc4.js"></script> -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9/tripledes.js"></script> -->
+
+</head>
+<body>
+<script type="text/javascript">
+    var ext = "{{ ext }}"
+    var data = "{{ data }}";
+    var key = localStorage.getItem("key");
+    var scheme = localStorage.getItem("scheme");
+    console.log("LocalStorage scheme is"+scheme);
+    console.log("Local key is "+key);
+
+    // function downloadURI(uri, name) {
+    //   var link = document.createElement("a");
+    //   link.download = name;
+    //   link.href = uri;
+    //   document.body.appendChild(link);
+    //   link.click();
+    //   document.body.removeChild(lpic.pngink);
+    //   delete link;
+    // }
+
+    // document.write("<p> " + data + "</p>");
+    // var scheme = localStorage.getItem("scheme");
+    // var key = localStorage.getItem("key");
+   // const crypted = CryptoJS.enc.Base64.parse(data);
+
+    // var words = CryptoJS.enc.Base64.parse(data);
+    // var textString = CryptoJS.enc.Base64.stringify(words);
+    // document.write(textString);
+    // var keym = CryptoJS.enc.Hex.parse("0xd76df8e7aefcf74d76df8e7aefcf74d7");
+    // document.write(keym);
+    // var textString = words.toString(CryptoJS.enc.Utf8);
+    // var decrypted = CryptoJS.AES.decrypt(data, CryptoJS.enc.Hex.parse("d76df8e7aefcf74d76df8e7aefcf74d7"),{ iv: CryptoJS.enc.Hex.parse("00000000000000000000000000000000"), padding: CryptoJS.pad.NoPadding, mode: CryptoJS.mode.ECB});
+    if(scheme=="AES"){
+    var decrypted = CryptoJS.AES.decrypt(data, CryptoJS.enc.Hex.parse(key), { iv: CryptoJS.enc.Hex.parse("00000000000000000000000000000000"), padding: CryptoJS.pad.NoPadding, mode: CryptoJS.mode.CTR });
+}
+
+    else if(scheme=="TripleDES"){
+        var decrypted = CryptoJS.TripleDES.decrypt(data, CryptoJS.enc.Hex.parse(key), { iv: CryptoJS.enc.Hex.parse("00000000000000000000000000000000"), padding: CryptoJS.pad.NoPadding, mode: CryptoJS.mode.CBC});
+    }
+
+    else{
+        var decrypted = CryptoJS.RC4.decrypt(data, CryptoJS.enc.Hex.parse(key));
+    }
+
+   var plain = CryptoJS.enc.Base64.stringify( decrypted );
+
+   var add = "";
+
+   if(ext=="png" || ext=="jpg" || ext=="jpeg"){
+        add = '<img src="data:image/'+ext+';base64, '+ plain + '"/>';
+        document.write(add);
+        document.write('<br> <a href="data:image/'+ext+';base64, '+ plain +'" download="image.'+ext+'"> Download Image </a>');
+        // document.write('<br><br> <a href="data:image/'+ext+';base64, '+ plain +'">Download Image </a>');
+        //document.write('<img src="data:image/png;base64, '+ plain + '">');
+   }
+
+   else if(ext=="mp4" || ext=="mkv" ){
+        add = '<video controls> <source type="video/'+ ext + '" src="data:video/mp4;base64, '+plain+  '"> </video>';
+        document.write(add);
+   }
+
+   else if(ext=="mp3"|| ext=="ogg" || ext=="m4a"){
+        add = '<audio controls src="data:audio/'+ext+';base64, ' + plain +'" />';
+        document.write(add);
+        document.write('<br> <a href="data:audio/'+ext+';base64, '+ plain +'" download="file.'+ext+'"> Download Audio </a>');
+   }
+
+   else if(ext=="pdf"){
+        var objbuilder='';
+        var windo = window.open("", "");
+        objbuilder += ('<object width="100%" height="100%" data="data:application/pdf;base64,');
+        objbuilder += (plain);
+        objbuilder += ('" type="application/pdf" class="internal">');
+        objbuilder += ('<embed src="data:application/pdf;base64,');
+        objbuilder += (plain);
+        objbuilder += ('" type="application/pdf"  />');
+        objbuilder += ('</object>');
+
+        var win = window.open("#","_blank");
+        var title = "Render Files";
+        win.document.write('<html><title>'+ title +'</title><body style="margin-top: 0px; margin-left: 0px; margin-right: 0px; margin-bottom: 0px;">');
+        win.document.write(objbuilder);
+        win.document.write('</body></html>');
+        layer = jQuery(win.document);
+           }
+
+   else{
+        var words = CryptoJS.enc.Base64.parse(plain);
+        var textString = CryptoJS.enc.Utf8.stringify(words);
+        add = textString;
+        document.write(add);
+   }
+
+
+
+
+
+   //var decrypted   = CryptoJS.TripleDES.decrypt(data, CryptoJS.enc.Hex.parse("7ef3a4d00ddfcd3316c9351190918593"), { iv: CryptoJS.enc.Hex.parse("00000000000000000000000000000000"), padding: CryptoJS.pad.NoPadding, mode: CryptoJS.mode.CBC });
+
+   //var encrypted = CryptoJS.AES.encrypt("Hello","abcdef1234567890abcdef1234567890");
+   //document.write(encrypted.toString(data));
+   //document.write(data);
+   //var decrypted = CryptoJS.RC4.decrypt(data, CryptoJS.enc.Hex.parse("ebb15c676a980ba50dc745cbf970d8de"));
+
+   //document.write(decrypted.toString());
+   // text = "password"
+   // key1 = "5d41402abc4b2a76b9719d911017c592abcdef0123456789"
+
+   // textWordArray = CryptoJS.enc.Utf8.parse(text);
+
+   // var encrypted = CryptoJS.TripleDES.encrypt(textWordArray, CryptoJS.enc.Hex.parse(key1), { padding: CryptoJS.pad.NoPadding, mode: CryptoJS.mode.CBC });
+
+   //var decrypted   = CryptoJS.TripleDES.decrypt(encrypted, CryptoJS.enc.Hex.parse(key1), {  padding: CryptoJS.pad.NoPadding, mode: CryptoJS.mode.CBC });
+
+   // document.write(decrypted.toString(CryptoJS.enc.Utf8));
+
+    // var rawData = data;
+    // var iv = btoa(rawData.substring(0,16));
+    // var crypttext = btoa(rawData.substring(16));
+    //ecb
+    // // Decrypt...+
+    //var plaintextArray = CryptoJS.AES.decrypt(data,CryptoJS.enc.Hex.parse("d76df8e7aefcf74d76df8e7aefcf74d7"));
+
+    // document.write(plain);
+
+    // function hex2a(hex) {
+    // var str = '';
+    // for (var i = 0; i < hex.length; i += 2)
+    //     str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+    // return str;
+    // }
+    //document.write(hex2a(decrypted.toString()));
+
+    // var words = CryptoJS.enc.Base64.parse(plain);
+    // var textString = CryptoJS.enc.Utf8.stringify(words);
+    // document.write(textString);
+
+    // var windo = window.open("", "");
+    // var objbuilder = '';
+    // objbuilder += ('<embed width=\'100%\' height=\'100%\'  src="data:application/pdf;base64,');
+    // objbuilder += (plain);
+    // objbuilder += ('" type="application/pdf" />');
+    // windo.document.write(objbuilder);
+
+    //document.write(hex2a(decrypted.toString()));
+    //document.write(decrypted.toString());
+    //document.write(decrypted.toString(CryptoJS.enc.Utf8));
+    // var decoded   = CryptoJS.AES.decrypt("Mc6prldI+uuh5Ko=", CryptoJS.enc.Hex.parse("0123456789abcdef0123456789abcdef"), { iv: CryptoJS.enc.Hex.parse("00000000000000000000000000000000"), padding: CryptoJS.pad.NoPadding, mode: CryptoJS.mode.CTR });
+    //document.write(decoded);
+
+    //document.getElementById("imgcont").append('<img src="data:image/png;base64,'+ decrypted.toString(CryptoJS.enc.Base64) + '">');
+
+
+    //document.write('<img src="data:image/png;base64, '+ plain + '">');
+
+
+    //document.write('<video controls> <source type="video/mp4" src="data:video/mp4;base64, '+plain+  '"> </video>');
+
+//     <video controls>
+//     <source type="video/webm" src="data:video/webm;base64,GkXfowEAAAAAAAAfQoaBAUL3gQFC8......jVOrhB9DtnVTrIMQTPc=">
+//     <source type="video/mp4" src="data:video/mp4;base64,AAAAHGZ0eXBtcDQyAAAAAG1wNDJpc29....../l/L+X8v5AAAAMgfDg==">
+// </video>
+    //document.write(plain);
+    // var myString = "Hello Bro";
+    // var myPassword = "1234567890123456";
+    // var encrypted = CryptoJS.AES.encrypt(myString, myPassword);
+    // document.write(encrypted);
+
+
+
+</script>
+
+
+
+</body>
+</html>
+
