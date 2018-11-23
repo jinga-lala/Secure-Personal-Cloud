@@ -18,7 +18,7 @@ class encryption_data:
         self.key = key
 
     def __str__(self):
-        return("Encryption Scheme : " + self.scheme + "\nKey : " + (net_ops.encode(self.key)) + "\nKey (hex): "+ (net_ops.encode(self.key)).hex())
+        return("Encryption Scheme : " + self.scheme + "\nKey : " + (net_ops.encode(self.key)) + "\nKey (hex): "+ (self.key).hex())
 
 
 def list():

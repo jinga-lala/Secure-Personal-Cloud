@@ -96,7 +96,7 @@ if __name__ == "__main__":
             else:
                 print("Observe a folder first")
         if(sys.argv[1] == "observe"):
-            if len(sys.argv == 2):
+            if len(sys.argv) == 2:
                 PWD = os.getcwd()
             else:
                 PWD = sys.argv[2]
@@ -146,7 +146,10 @@ if __name__ == "__main__":
                         a, d = utils.get_paths_of_uploads_and_downloads(pwd=PWD, server=SERVER, username=USER, update=True, token=TOKEN)
                         # print(a)
                         pwd = os.path.join(os.path.dirname(os.path.abspath(__file__)), "temp")
-                        os.mkdir(pwd)
+                        try:
+                            shutil.rmtree(pwd)
+                        except:
+                            os.mkdir(pwd)
                         utils.create_files(a, pwd, USER, SERVER, TOKEN)
                         '''
                         TODO - proper UX here
