@@ -19,7 +19,7 @@ def login(username, password, server, first=False):
 
     login_data2 = {'username': username, 'password': password}
     first_response = client.post(url_login, data=login_data, headers={'csrfmiddlewaretoken': csrftoken})
-    print(first_response)
+    # print(first_response)
     client.close()
 
     get_token = {'username': username, 'password': password}

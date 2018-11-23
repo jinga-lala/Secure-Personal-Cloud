@@ -1,1 +1,1 @@
-{"SERVER": "http://192.168.100.12:8000/", "USER": "yashkhem1", "PWD": "/home/anshuln/test", "AUTHENTICATED": true, "TOKEN": "9754e02d49ba430d8cecb00bd79b6b93615c1728"}
+{"SERVER": "http://192.168.100.12:8000/", "USER": "dummy", "PWD": "/home/anshuln/demo", "AUTHENTICATED": true, "TOKEN": "b63c12206955a597eb09243776fa4631a29798e6"}

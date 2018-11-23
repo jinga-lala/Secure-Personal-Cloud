@@ -69,6 +69,8 @@ def upload_file(path, pwd, user, server, token, username, key_path, shared=False
     api_url = server + "api/" + username + "/"
     client = requests.session()
     p = client.post(api_url, data=post_data, headers=headers)
+    if p.status_code == 400:
+        print("File not uploaded correctly...")
     return p
     # TODO
 
@@ -216,6 +218,7 @@ def update_file(path, pwd, username, server, token):
     api_url = server + "updateAPI/" + username + "/" + path
     client = requests.session()
     p = client.post(api_url, data=post_data, headers=headers)
+    # print(updateAPI)
     return p
 
 def check_before_sync(username,server,token):
