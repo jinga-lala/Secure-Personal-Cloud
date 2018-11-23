@@ -53,8 +53,8 @@ def create_file(path, pwd, user, server, token, key_path=KEY_PATH,sender='', sha
         os.makedirs(directory)
     except FileExistsError:
         a = 1
-    network_operations.download_file(path, pwd, user, server, token, key_path,sender, shared)
-
+    status = network_operations.download_file(path, pwd, user, server, token, key_path,sender, shared)
+    return status
     # file = open(path, "wb")
     # file.write(data)
     # # print(timestamp)
@@ -71,7 +71,9 @@ def create_files(paths, pwd, user, server, token, key_path=KEY_PATH, shared=Fals
     i = 0
     for path in paths:
         print("Downloading ", path)
-        create_file(path, pwd, user, server, token, key_path, shared)
+        status = create_file(path, pwd, user, server, token, key_path, shared)
+        if(status!=True):
+            print("Did not download file")
         printProgressBar(i + 1, len(paths), prefix='Progress:', suffix='Complete', length=50)
         i += 1
 
@@ -130,12 +132,47 @@ def resolve_conflicts(paths, pwd, username, user_id, server, token):
                 if(choice == 'u'):
                     network_operations.update_file(file[2:], pwd, username, server, token)
                 if(choice == 'd'):
-                    create_file(file, pwd, username, server)
+                    status = create_file(file, pwd, username, server)
+                    if(status == False):
+                        print("Error in Downloading file, can't resolve conflict...")
             else:
-                network_operations.download_file(file, pwd, username, server, token, KEY_PATH, buff=True)
+                status = network_operations.download_file(file, pwd, username, server, token, KEY_PATH, buff=True)
                 # fileb = open("./buff_diff.txt", "wb")
                 # fileb.write(contents)
                 # fileb.close()
+                if status == True:
+                    f1 = open(pwd + "/buff_diff.txt", "r")
+                    f2 = open(file, "r")
+                    diff1 = difflib.unified_diff(f1.readlines(), f2.readlines(), fromfile=file, tofile=pwd + "/buff_diff.txt")
+                    diff2 = difflib.unified_diff(f1.readlines(), f2.readlines(), fromfile=file, tofile=pwd + "/buff_diff.txt")
+                    f2.close()
+                    f1.close()
+
+                    os.remove(pwd + "/buff_diff.txt")
+                    # if(1.0 * len([_ for _ in diff1]) < (0.15) * len([_ for _ in f2.readlines()])):  # Threshold=15%
+                    #     print("Fast forwarding ", file)
+                    #     create_file(file, pwd, username, server)
+                    # else:
+                    print("For file", file, "Here are the conflicts")
+                    for line in diff1:
+                        print(line)
+                    choice = input("Enter 'u' to upload file, 'd' to download : ")
+                    if(choice == 'u'):
+                        network_operations.update_file(file[2:], pwd, username, server, token)
+                    if(choice == 'd'):
+                        create_file(file, pwd, username, server, token)
+                else:
+                    print("Cant resolve conflicts, file is not encrypted properly.")
+        else:
+
+            '''
+            Diff here
+            '''
+            status = network_operations.download_file(file,pwd, username, server, token, key_path=KEY_PATH, buff=True)
+            # fileb = open("./buff_diff.txt", "wb")
+            # fileb.write(contents)
+            # fileb.close()
+            if status == True:
                 f1 = open(pwd + "/buff_diff.txt", "r")
                 f2 = open(file, "r")
                 diff1 = difflib.unified_diff(f1.readlines(), f2.readlines(), fromfile=file, tofile=pwd + "/buff_diff.txt")
@@ -155,38 +192,9 @@ def resolve_conflicts(paths, pwd, username, user_id, server, token):
                 if(choice == 'u'):
                     network_operations.update_file(file[2:], pwd, username, server, token)
                 if(choice == 'd'):
-                    create_file(file, pwd, username, server, token)
-
-        else:
-
-            '''
-            Diff here
-            '''
-            network_operations.download_file(file,pwd, username, server, token, key_path=KEY_PATH, buff=True)
-            # fileb = open("./buff_diff.txt", "wb")
-            # fileb.write(contents)
-            # fileb.close()
-            f1 = open(pwd + "/buff_diff.txt", "r")
-            f2 = open(file, "r")
-            diff1 = difflib.unified_diff(f1.readlines(), f2.readlines(), fromfile=file, tofile=pwd + "/buff_diff.txt")
-            diff2 = difflib.unified_diff(f1.readlines(), f2.readlines(), fromfile=file, tofile=pwd + "/buff_diff.txt")
-            f2.close()
-            f1.close()
-
-            os.remove(pwd + "/buff_diff.txt")
-            # if(1.0 * len([_ for _ in diff1]) < (0.15) * len([_ for _ in f2.readlines()])):  # Threshold=15%
-            #     print("Fast forwarding ", file)
-            #     create_file(file, pwd, username, server)
-            # else:
-            print("For file", file, "Here are the conflicts")
-            for line in diff1:
-                print(line)
-            choice = input("Enter 'u' to upload file, 'd' to download : ")
-            if(choice == 'u'):
-                network_operations.update_file(file[2:], pwd, username, server, token)
-            if(choice == 'd'):
-                create_file(file, pwd, username, server, token)
-
+                    status = create_file(file, pwd, username, server, token)
+            else:
+                print("Cant resolve conflicts, file is not encrypted properly.")
 
 def send_file(user, reciever, path, pwd, server, token):
     '''
@@ -208,15 +216,18 @@ def send_file(user, reciever, path, pwd, server, token):
         print("Enter a valid user")
 
 
-def recieve_files(reciever, pwd, server, token):
+def recieve_files(reciever, pwd, server, token,auto=False):
     files = network_operations.check_for_files(reciever, server,token)
     if(len(files)):
+        if auto == True:
+            return "There are files shared with you waiting to be downloaded..."
         shared_with_me = {}
         for x in files:
             try:
                 shared_with_me[x["sender"]].append(x["path"])
             except:
                 shared_with_me.update({x["sender"]: [x["path"]]})
+        
         for x in shared_with_me:
             print("User ", x, " has sent you", len(shared_with_me[x]), " file(s)")
             choice = input("Do you want to download them? (Make sure you have the key...)")
@@ -225,17 +236,18 @@ def recieve_files(reciever, pwd, server, token):
                 en_de.get_schema(path=key_path)
                 for file in shared_with_me[x]:
                     print("Downloading ", file)
-                    create_file(file, pwd, reciever, server, token, key_path, sender=x,shared=True)
-                    
-                    network_operations.recieved_shared(reciever,x, file, server,token)
-                    print("Backing file up...")
-                    # reciever_uploader = network_operations.get_user_id(reciever,server)
-                    # if (file in [x["path"] for x in get_paths(server,data["sender"])]):
-                    # print("There is a conflict in ",file,". \nResolve and resync with the server")
-                    # else:
-                    rec_id = network_operations.get_user_id(reciever,server,token)
-                    network_operations.upload_file(file, pwd,rec_id, server, token,reciever,KEY_PATH)
-
+                    status = create_file(file, pwd, reciever, server, token, key_path, sender=x,shared=True)
+                    if status == True:
+                        network_operations.recieved_shared(reciever,x, file, server,token)
+                        print("Backing file up...")
+                        # reciever_uploader = network_operations.get_user_id(reciever,server)
+                        # if (file in [x["path"] for x in get_paths(server,data["sender"])]):
+                        # print("There is a conflict in ",file,". \nResolve and resync with the server")
+                        # else:
+                        rec_id = network_operations.get_user_id(reciever,server,token)
+                        network_operations.upload_file(file, pwd,rec_id, server, token,reciever,KEY_PATH)
+                    else:
+                        print("The key that",x,"gave you was probably incorrect... You may want to review your friendship.")
 
 def die_with_usage():
     print("Enter a couple of args please")

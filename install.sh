@@ -15,3 +15,7 @@ pip3 install shutil
 pip3 install getpass
 pip3 install difflib
 echo "Run server, then run script"
+
+# Put in crontab 
+# 30 * * * * "$path""/Secure_Personal_Cloud/linux/test.sh "$path"
+# 30 * * * * "$path""/Secure_Personal_Cloud/linux/sharer.sh "$path"

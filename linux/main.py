@@ -59,6 +59,22 @@ if __name__ == "__main__":
             json.dump(j, l)
             l.close()
     elif(AUTHENTICATED == True):
+        if sys.argv[1]=="auto_sync":
+            allowed = network_operations.check_before_sync(USER,SERVER,TOKEN)
+            if allowed == False:
+                sys.stderr.write("Time for periodic sync, but db is locked currently")
+            else:
+                a, b, c, d = utils.get_paths_of_uploads_and_downloads(pwd=PWD, server=SERVER, username=USER, token=TOKEN)
+                if len(c)>0:
+                    sys.stderr.write("Time for sync in Directory "+PWD+". Resolve Conflicts manually")
+                else:
+                    network_operations.send_lock_signal(USER,SERVER,TOKEN,"Y")
+                    utils.create_files(a, PWD, USER, SERVER, TOKEN)
+                    utils.upload_files(b, PWD, d, SERVER, TOKEN, USER)
+                    network_operations.send_lock_signal(USER,SERVER,TOKEN,"N")
+                    sys.stderr.write("Sync completed")
+        if sys.argv[1]=="auto_check":
+            sys.stderr.write(utils.recieve_files(USER,PWD,SERVER,TOKEN,True))
         if(sys.argv[1] == "check_for_files"):
             utils.recieve_files(USER, PWD, SERVER)
         if(sys.argv[1] == "send_file"):
@@ -112,6 +128,9 @@ if __name__ == "__main__":
             except:
                 print(" ")
         if(sys.argv[1] == "sync"):
+            if SERVER == "" or USER == "" or PWD == "":
+                print("Log in and observe a dir first")
+                exit(0)
             input_pwd = getpass.getpass("Enter your Password : ")
             ans,_=authenticate.login(USER, input_pwd, SERVER)
             # print(ans)
@@ -136,6 +155,10 @@ if __name__ == "__main__":
                     print("Access Denied")
         if(sys.argv[1] == "en-de"):
             if sys.argv[2] == "update":
+                if SERVER == "" or USER == "" or PWD == "":
+                    print("Log in and observe a dir first")
+                    exit(0)
+
                 input_pwd = getpass.getpass("Enter your Password : ")
                 ans,_=authenticate.login(USER, input_pwd, SERVER)
                 if(ans):
