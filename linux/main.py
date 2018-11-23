@@ -11,7 +11,7 @@ from shutil import rmtree
 USER = ''
 SERVER = ''
 PWD = './'
-TOKEN= ''
+TOKEN = ''
 LOGFILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "log.txt")
 j = dict()
 if __name__ == "__main__":
@@ -26,22 +26,22 @@ if __name__ == "__main__":
     AUTHENTICATED = j["AUTHENTICATED"]
     TOKEN = j["TOKEN"]
     # print((AUTHENTICATED=="False"),len(sys.argv))
-    if(PWD==""):
-        PWD="./"
+    if(PWD == ""):
+        PWD = "./"
 
     if(len(sys.argv) == 1 and AUTHENTICATED == True):
         l = open(LOGFILE, "r")
         j = json.load(l)
         user = j["USER"]
         print('You are already logged in as ' + user)
-        utils.recieve_files(USER,PWD,SERVER)
+        # utils.recieve_files(USER, PWD, SERVER)
 
         l.close()
     elif(len(sys.argv) == 1 and AUTHENTICATED == False):
         input_user = input("Enter Username : ")
         input_pwd = getpass.getpass("Enter Password : ")
         SERVER = input("Enter server : ")
-        ans,TOKEN = authenticate.login(input_user, input_pwd, SERVER,True)
+        ans, TOKEN = authenticate.login(input_user, input_pwd, SERVER, True)
         if(ans):
             print("AUTHENTICATED. Hello", input_user)
             l = open(LOGFILE, "w")
@@ -50,7 +50,7 @@ if __name__ == "__main__":
             j["PWD"] = PWD
             j["AUTHENTICATED"] = True
             j["TOKEN"] = TOKEN
-            json.dump(j, l) 
+            json.dump(j, l)
             l.close()
         else:
             print("ACCESS DENIED")
@@ -60,11 +60,11 @@ if __name__ == "__main__":
             l.close()
     elif(AUTHENTICATED == True):
         if(sys.argv[1] == "check_for_files"):
-            utils.recieve_files(USER,PWD,SERVER)
+            utils.recieve_files(USER, PWD, SERVER)
         if(sys.argv[1] == "send_file"):
             reciever = input("Enter the reciever : ")
             path = input("Enter the relative path of the file (provided it is backed up) : ")
-            utils.send_file(USER,reciever,path,PWD,SERVER)
+            # utils.send_file(USER, reciever, path, PWD, SERVER)
         if(sys.argv[1] == "set-url"):
             if(len(sys.argv) < 3):
                 utils.die_with_usage()
@@ -89,8 +89,8 @@ if __name__ == "__main__":
             print("Logged out successfully")
         if(sys.argv[1] == "status"):
             if(SERVER != "" and USER != "" and PWD != ""):
-                utils.status(PWD, SERVER, USER,token=TOKEN)
-                utils.recieve_files(USER,PWD,SERVER)
+                utils.status(PWD, SERVER, USER, token=TOKEN)
+                # utils.recieve_files(USER, PWD, SERVER)
             # elif USER == "":
             #     print("Login first")
             else:
@@ -104,31 +104,33 @@ if __name__ == "__main__":
             l.close()
         if(sys.argv[1] == "sync"):
             input_pwd = getpass.getpass("Enter your Password : ")
-            if(authenticate.login(USER, input_pwd, SERVER)):
+            ans,_=authenticate.login(USER, input_pwd, SERVER)
+            if(ans):
                 print("Authenticated")
-                utils.recieve_files(USER,PWD,SERVER)
+                # utils.recieve_files(USER, PWD, SERVER)
                 a, b, c, d = utils.get_paths_of_uploads_and_downloads(pwd=PWD, server=SERVER, username=USER, token=TOKEN)
                 utils.status(PWD, SERVER, USER, TOKEN)
                 if(len(a) or len(b) or len(c)):
                     choice = input("Press y to continue , n to quit : ")
                     if(choice == "y"):
-                        utils.create_files(a, PWD, USER, SERVER,TOKEN)
-                        utils.upload_files(b, PWD, d, SERVER,TOKEN, USER)
-                        utils.resolve_conflicts(c, PWD, USER, d, SERVER,TOKEN)
+                        utils.create_files(a, PWD, USER, SERVER, TOKEN)
+                        utils.upload_files(b, PWD, d, SERVER, TOKEN, USER)
+                        utils.resolve_conflicts(c, PWD, USER, d, SERVER, TOKEN)
                 # else:
                 #     print("Directory already upto date")
             else:
                 print("Access Denied")
-        if(sys.argv[1]=="en-de"):
+        if(sys.argv[1] == "en-de"):
             if sys.argv[2] == "update":
                 input_pwd = getpass.getpass("Enter your Password : ")
-                if(authenticate.login(USER, input_pwd, SERVER)):
+                ans,_=authenticate.login(USER, input_pwd, SERVER)
+                if(ans):
                     print("Authenticated")
-                    a,d = utils.get_paths_of_uploads_and_downloads(pwd=PWD, server=SERVER, username=USER,update=True,token=TOKEN)
+                    a, d = utils.get_paths_of_uploads_and_downloads(pwd=PWD, server=SERVER, username=USER, update=True, token=TOKEN)
                     # print(a)
                     pwd = os.path.join(os.path.dirname(os.path.abspath(__file__)), "temp")
                     os.mkdir(pwd)
-                    utils.create_files(a, pwd, USER, SERVER,TOKEN)
+                    utils.create_files(a, pwd, USER, SERVER, TOKEN)
                     '''
                     TODO - proper UX here
                     '''
@@ -142,13 +144,13 @@ if __name__ == "__main__":
 
             elif sys.argv[2] == "dump":
                 choice = input("The details of the scheme will soon appear on the screen. Do you really want that?\n")
-                choice=choice.lower()
-                if choice == "y" or choice== "yes":
+                choice = choice.lower()
+                if choice == "y" or choice == "yes":
                     en_de.disp_schema()
                 else:
-                    print("Well okay then")   
+                    print("Well okay then")
             elif sys.argv[2] == "list":
-                en_de.list() 
+                en_de.list()
 
     # SERVER=input("Enter server IP : ")
     # print(SERVER)
