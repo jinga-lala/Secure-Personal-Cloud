@@ -40,6 +40,7 @@ def generate_schema(scheme="AES", key="", path=PATH):
             key = Random.get_random_bytes(16)
         print("Your scheme is", scheme)
         print("Your key is", net_ops.encode(key))
+        print("Your key (in hex for web client) is",key.hex())
         print("As if you will remember your key... Just copy the file 'crypto.dat' in your installation folder for your next login, or change your key")
     else:
         while(len(key) % 4):
@@ -77,6 +78,7 @@ def generate_schema(scheme="AES", key="", path=PATH):
         # 		key = input("Enter a key : ")
         # 		generate_schema(scheme,key)
         # 		return
+    print("Your key (in hex for web client) is",key.hex())
     d = encryption_data(scheme, key)
     f = open(path, "wb")
     pickle.dump(d, f)

@@ -27,7 +27,7 @@ if __name__ == "__main__":
     TOKEN = j["TOKEN"]
     # print((AUTHENTICATED=="False"),len(sys.argv))
     if(PWD == ""):
-        PWD = "./"
+        PWD = "."
 
     if(len(sys.argv) == 1 and AUTHENTICATED == True):
         l = open(LOGFILE, "r")

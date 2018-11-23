@@ -2,6 +2,8 @@ read -p "Enter the path for installation (Default is ~/) '\n'" path
 echo "$path"
 # cp -R Secure_Personal_Cloud "$path"
 alias_bash="alias spc=python3 $path/Secure-Personal-Cloud/linux/main.py"
+sudo cp manual.1 /usr/local/man/man1/
+sudo mandb
 # echo "$alias_bash"
 echo "$alias_bash" >> ~/.bashrc
 pip3 install requests
