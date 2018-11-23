@@ -73,7 +73,8 @@ if __name__ == "__main__":
                     utils.upload_files(b, PWD, d, SERVER, TOKEN, USER)
                     network_operations.send_lock_signal(USER,SERVER,TOKEN,"N")
                     sys.stderr.write("Sync completed")
-
+        if sys.argv[1]=="auto_check":
+            sys.stderr.write(utils.recieve_files(USER,PWD,SERVER,TOKEN,True))
         if(sys.argv[1] == "check_for_files"):
             utils.recieve_files(USER, PWD, SERVER)
         if(sys.argv[1] == "send_file"):

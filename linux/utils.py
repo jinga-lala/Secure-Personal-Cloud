@@ -216,15 +216,18 @@ def send_file(user, reciever, path, pwd, server, token):
         print("Enter a valid user")
 
 
-def recieve_files(reciever, pwd, server, token):
+def recieve_files(reciever, pwd, server, token,auto=False):
     files = network_operations.check_for_files(reciever, server,token)
     if(len(files)):
+        if auto == True:
+            return "There are files shared with you waiting to be downloaded..."
         shared_with_me = {}
         for x in files:
             try:
                 shared_with_me[x["sender"]].append(x["path"])
             except:
                 shared_with_me.update({x["sender"]: [x["path"]]})
+        
         for x in shared_with_me:
             print("User ", x, " has sent you", len(shared_with_me[x]), " file(s)")
             choice = input("Do you want to download them? (Make sure you have the key...)")

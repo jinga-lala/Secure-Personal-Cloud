@@ -17,4 +17,5 @@ pip3 install difflib
 echo "Run server, then run script"
 
 # Put in crontab 
-# 30 * * * * /home/anshuln/test.sh "$path"
+# 30 * * * * "$path""/Secure_Personal_Cloud/linux/test.sh "$path"
+# 30 * * * * "$path""/Secure_Personal_Cloud/linux/sharer.sh "$path"
