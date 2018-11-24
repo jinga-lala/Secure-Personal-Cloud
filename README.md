@@ -6,9 +6,9 @@
 
 
 
-**Author:**
-Yash  Jain (yash.jain3599@gmail.com)
-Yash Khemchandani (yashkhem1@gmail.com)
+**Author:**\
+Yash  Jain (yash.jain3599@gmail.com) \
+Yash Khemchandani (yashkhem1@gmail.com)\
 Anshul Nasery (anshulnasery@gmail.com)
 
 **Supervisor:**
