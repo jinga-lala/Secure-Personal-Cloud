@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title> Render AES files </title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9/crypto-js.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9/aes.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9/tripledes.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9/rc4.js"></script>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+<div class = "container-fluid">
+<script type="text/javascript">
+    var ext = "{{ ext }}"
+    var data = "{{ data }}";
+    var key = localStorage.getItem("key");
+    var scheme = localStorage.getItem("scheme");
+    console.log("LocalStorage scheme is"+scheme);
+    console.log("Local key is "+key);
+
+    if(scheme=="AES"){
+    var decrypted = CryptoJS.AES.decrypt(data, CryptoJS.enc.Hex.parse(key), { iv: CryptoJS.enc.Hex.parse("00000000000000000000000000000000"), padding: CryptoJS.pad.NoPadding, mode: CryptoJS.mode.CTR });
+}
+
+    else if(scheme=="TripleDES"){
+        var decrypted = CryptoJS.TripleDES.decrypt(data, CryptoJS.enc.Hex.parse(key), { iv: CryptoJS.enc.Hex.parse("00000000000000000000000000000000"), padding: CryptoJS.pad.NoPadding, mode: CryptoJS.mode.CBC});
+    }
+
+    else{
+        var decrypted = CryptoJS.RC4.decrypt(data, CryptoJS.enc.Hex.parse(key));
+    }
+
+   var plain = CryptoJS.enc.Base64.stringify( decrypted );
+
+   var add = "";
+
+   if(ext=="png" || ext=="jpg" || ext=="jpeg"){
+        add = '<img src="data:image/'+ext+';base64, '+ plain + '"/>';
+        document.write(add);
+        document.write('<br> <a href="data:image/'+ext+';base64, '+ plain +'" download="image.'+ext+'"> Download Image </a>');
+        // document.write('<br><br> <a href="data:image/'+ext+';base64, '+ plain +'">Download Image </a>');
+        //document.write('<img src="data:image/png;base64, '+ plain + '">');
+   }
+
+   else if(ext=="mp4" || ext=="mkv" ){
+        add = '<video controls> <source type="video/'+ ext + '" src="data:video/mp4;base64, '+plain+  '"> </video>';
+        document.write(add);
+   }
+
+   else if(ext=="mp3"|| ext=="ogg" || ext=="m4a"){
+        add = '<audio controls src="data:audio/'+ext+';base64, ' + plain +'" />';
+        document.write(add);
+        document.write('<br> <a href="data:audio/'+ext+';base64, '+ plain +'" download="file.'+ext+'"> Download Audio </a>');
+   }
+
+   else if(ext=="pdf"){
+        var objbuilder='';
+        var windo = window.open("", "");
+        objbuilder += ('<object width="100%" height="100%" data="data:application/pdf;base64,');
+        objbuilder += (plain);
+        objbuilder += ('" type="application/pdf" class="internal">');
+        objbuilder += ('<embed src="data:application/pdf;base64,');
+        objbuilder += (plain);
+        objbuilder += ('" type="application/pdf"  />');
+        objbuilder += ('</object>');
+
+        var win = window.open("#","_blank");
+        var title = "Render Files";
+        win.document.write('<html><title>'+ title +'</title><body style="margin-top: 0px; margin-left: 0px; margin-right: 0px; margin-bottom: 0px;">');
+        win.document.write(objbuilder);
+        win.document.write('</body></html>');
+        layer = jQuery(win.document);
+           }
+
+   else{
+        var words = CryptoJS.enc.Base64.parse(plain);
+        var textString = CryptoJS.enc.Utf8.stringify(words);
+        add = textString;
+        display_txt = add.replace(/\n/g, "<br />");
+        document.write('<i><div style=" font-size: 1.3em;">' + display_txt + "</div></i>");
+   }
+
+
+</script>
+
+</div>
+
+</body>
+</html>
+

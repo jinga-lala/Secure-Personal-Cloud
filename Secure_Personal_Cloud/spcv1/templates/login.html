@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  {% if user.is_authenticated %}
+
+    <meta http-equiv="REFRESH" content="0;url={% url 'home' %}">
+
+  {% else %}
+  <div class="container-fluid">
+  <h2 style="margin-left: 10px;">Log in to My Site</h2>
+  <!-- <img src="Secure-Business.jpg" align="right" alt="Photo"> -->
+  {% if form.errors %}
+    <p style="color: red">Your username and password didn't match. Please try again.</p>
+  {% endif %}
+  <form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ next }}" />
+    {% for field in form %}
+      <p style="margin-left: 10px;">
+        {{ field.label_tag }}<br>
+        {{ field }}<br>
+        {% for error in field.errors %}
+          <p style="color: red">{{ error }}</p>
+        {% endfor %}
+        {% if field.help_text %}
+          <p><small style="color: grey">{{ field.help_text }}</small></p>
+        {% endif %}
+      </p>
+    {% endfor %}
+    <button type="submit" style="margin-left: 10px;">Log in</button>
+    <!-- <a href="{% url 'signup' %}" "style="font-size: 1.5em;margin-left: 5px;>New to My Site? Sign up</a> -->
+  </form>
+</div>
+  {% endif %}
+{% endblock %}

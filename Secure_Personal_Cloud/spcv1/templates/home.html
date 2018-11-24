@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{# if user.is_authenticated #}
+    <script>
+        function submitMe() {
+             var scheme = document.querySelector('input[name="scheme"]:checked').value;
+             var key = document.getElementById('key').value;
+             console.log("scheme is"+scheme);
+             localStorage.setItem("scheme", scheme);
+             localStorage.setItem("key", key);
+             console.log(scheme);
+        }
+    </script>
+  <div class="container-fluid">
+  <h4 style="margin-left: 10px;"> You are logged in as {{ user.username }}</h4>
+  
+
+  <div  style="margin-left: 10px;"><strong> You shall not pass! (Unless you know the encryption schema of course)</strong></div><br> 
+   <div style="margin-left: 10px;">
+  Enter Encryption Scheme: <br><br>
+  </div>
+  <input type="radio" name="scheme" value="AES" checked style="margin-left: 10px;"> AES <br>
+  <input type="radio" name="scheme" value="TripleDES" style="margin-left: 10px;"> Triple DES <br>
+  <input type="radio" name="scheme" value="RC4" style="margin-left: 10px;"> RC4  <br><br>
+  <div style="margin-left: 10px;">Enter Decryption Key: <input type="text" width="36" id="key" >  </div>
+  <form action="{% url 'files' %}" method="post">
+             {% csrf_token %}
+            <button style="margin-left: 10px;" type="submit" onclick="submitMe()" name="id" value="{{ user.id }}" style="background-color: #ccccc">Go</button>
+  </form>
+</div>
+  <br>
+
+{# else #}
+    <!-- <meta http-equiv="REFRESH" content="0;url={% url 'login' %}"> -->
+{# endif #}
+{% endblock %}

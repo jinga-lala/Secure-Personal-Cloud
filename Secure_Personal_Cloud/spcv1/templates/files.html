@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <link rel="icon" href="./images.png" type="image/x-icon"></link>
+    <title>{% block title %}Secure Personal Cloud {% endblock %}</title>
+     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <!-- <link rel="stylesheet" type="text/css" href="animate.css"> -->
+    <!-- <link rel="stylesheet" href="page.css"> -->
+    <!-- <link rel="stylesheet"  href="./animate.css"/> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+    <style>
+
+    ul{
+        font-size: large;
+    }
+
+    li{
+        font-size: large;
+    }
+        .tree, .tree ul {
+        margin:0;
+        padding:0;
+        list-style:none
+    }
+    .tree ul {
+        margin-left:1em;
+        position:relative
+    }
+    .tree ul ul {
+        margin-left:.5em
+    }
+    .tree ul:before {
+        content:"";
+        display:block;
+        width:0;
+        position:absolute;
+        top:0;
+        bottom:0;
+        left:0;
+        border-left:1px solid
+    }
+    .tree li {
+        margin:0;
+        padding:0 1em;
+        line-height:2em;
+        color:#369;
+        font-weight:700;
+        position:relative
+    }
+    .tree ul li:before {
+        content:"";
+        display:block;
+        width:10px;
+        height:0;
+        border-top:1px solid;
+        margin-top:-1px;
+        position:absolute;
+        top:1em;
+        left:0
+    }
+    .tree ul li:last-child:before {
+        background:#fff;
+        height:auto;
+        top:1em;
+        bottom:0
+    }
+    .indicator {
+        margin-right:5px;
+    }
+    .tree li a {
+        text-decoration: none;
+        color:#369;
+    }
+    .tree li button, .tree li button:active, .tree li button:focus {
+        text-decoration: none;
+        color:#369;
+        border:none;
+        background:transparent;
+        margin:0px 0px 0px 0px;
+        padding:0px 0px 0px 0px;
+        outline: 0;
+    }
+    </style>
+
+
+</head>
+<body>
+    <div class="container-fluid">
+    <h1 align="center" class="wow fadeInLeft animated" data-wow-offset="0" data-wow-delay="0.2s" style="visibility:visible; -webkit-animation-delay: 0.0s; -moz-animation-delay: 0.4s; animation-delay: 0.5s;background-color: #DAF7A6 ;padding: 20px" ><strong>Files on the server</strong></h1>
+    <h4 style="margin-left: 10px;"> (Click on the folders to view the files) </h4>
+    <div id="form">
+        <form action="{% url 'render' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="id" id="inp1" />
+            <input type="hidden" name="path" id="inp2" />
+            <!-- <input type="hidden" name="scheme" id="inp3" />
+            <input type="hidden" name="key" id="inp4" /> -->
+            <button type="submit" id="button" style="display: none"> Hello</button>
+        </form>
+    </div>
+
+    <div class="container" style="margin-top:30px;">
+
+     <script type="text/javascript">
+
+        // alert(localStorage.getItem("key"));
+
+        var key = localStorage.getItem("key");
+        var scheme = localStorage.getItem("scheme");
+        console.log("LocalStorage scheme is"+scheme);
+        console.log("Local key is "+key);
+
+        // $(document).ready(function(){
+        //     $("#inp3").attr('value',scheme);
+        //     $("#inp4").attr('value',key);
+        // });
+
+        var paths = {{ paths|safe }};
+
+        var hierarchy = paths.reduce(function(hier,path){
+            var x = hier;
+            path.split('/').forEach(function(item){
+                if(!x[item]){
+                    x[item] = {};
+                }
+                x = x[item];
+            });
+            x.path = path;
+            return hier;
+        }, {});
+
+        var makeul = function(hierarchy, classname){
+            var dirs = Object.keys(hierarchy);
+            var ul = '<ul';
+            if(classname){
+                ul += ' class="' + classname + '"';
+            }
+            ul += '>\n';
+            dirs.forEach(function(dir){
+                var path = hierarchy[dir].path;
+                if(path){ // file
+                    ul += '<li class="file" data-url="' + path + '">' + dir + '</li>\n';
+                }else{
+                    ul += '<li class="folder">' + dir + '\n';
+                    ul += makeul(hierarchy[dir]);
+                    ul += '</li>\n';
+                }
+            });
+            ul += '</ul>\n';
+            return ul;
+        };
+
+        document.write(makeul(hierarchy, 'tree1'))
+    </script>
+
+    <script type="text/javascript">
+        $.fn.extend({
+        treed: function (o) {
+
+          var openedClass = 'glyphicon-minus-sign';
+          var closedClass = 'glyphicon-plus-sign';
+
+          if (typeof o != 'undefined'){
+            if (typeof o.openedClass != 'undefined'){
+            openedClass = o.openedClass;
+            }
+            if (typeof o.closedClass != 'undefined'){
+            closedClass = o.closedClass;
+            }
+          };
+
+            //initialize each of the top levels
+            var tree = $(this);
+            tree.addClass("tree");
+            tree.find('li').has("ul").each(function () {
+                var branch = $(this); //li with children ul
+                branch.prepend("<i class='indicator glyphicon " + closedClass + "'></i>");
+                branch.addClass('branch');
+                branch.on('click', function (e) {
+                    if (this == e.target) {
+                        var icon = $(this).children('i:first');
+                        icon.toggleClass(openedClass + " " + closedClass);
+                        $(this).children().children().toggle();
+                    }
+                })
+                branch.children().children().toggle();
+            });
+            //fire event from the dynamically added icon
+          tree.find('.branch .indicator').each(function(){
+            $(this).on('click', function () {
+                $(this).closest('li').click();
+            });
+          });
+            //fire event to open branch if the li contains an anchor instead of text
+            tree.find('.branch>a').each(function () {
+                $(this).on('click', function (e) {
+                    $(this).closest('li').click();
+                    e.preventDefault();
+                });
+            });
+            //fire event to open branch if the li contains a button instead of text
+            tree.find('.branch>button').each(function () {
+                $(this).on('click', function (e) {
+                    $(this).closest('li').click();
+                    e.preventDefault();
+                });
+            });
+        }
+    });
+    $("ul[class='tree1']").treed({openedClass:'glyphicon-folder-open', closedClass:'glyphicon-folder-close'});
+    </script>
+
+</div>
+
+    <script type="text/javascript">
+
+        // function post(path, params, method) {
+        //     method = method || "post"; // Set method to post by default if not specified.
+
+        //     // The rest of this code assumes you are not using a library.
+        //     // It can be made less wordy if you use one.
+        //     var form = document.createElement("form");
+        //     //form.innerHTML = "{% csrf_token %}";
+        //     form.setAttribute("method", method);
+        //     form.setAttribute("action", path);
+
+        //     for(var key in params) {
+        //         if(params.hasOwnProperty(key)) {
+        //             var hiddenField = document.createElement("input");
+        //             hiddenField.setAttribute("type", "hidden");
+        //             hiddenField.setAttribute("name", key);
+        //             hiddenField.setAttribute("value", params[key]);
+
+        //             form.appendChild(hiddenField);
+        //         }
+        //     }
+
+        //     document.body.appendChild(form);
+        //     form.submit();
+        // }
+
+        document.getElementById("form").style.display="none"
+
+        $(document).ready(function(){
+            $("li[class='file']").click(function(){
+                var uid = {{ id|safe }};
+                var fpath = $(this).attr("data-url");
+                fpath = "./"+fpath;
+                //post('/render/',{ id : uid, path : fpath })
+                $("#inp1").attr('value',uid);
+                $("#inp2").attr('value',fpath);
+                $("#button").click();
+            })});
+
+    </script>
+</div>
+
+</body>
+</html>
+
+
+
+
